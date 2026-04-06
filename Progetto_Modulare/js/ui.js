@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { scene, container, camera, controls, initialCameraPos, animatedMaterials, animParams } from './scene.js';
 import { forceUpdate } from './main.js';
+import { t } from './i18n.js';
 
 // Esportiamo le variabili per farle leggere al loop di animazione
 export let gridHelper;
@@ -95,7 +96,7 @@ export function initUI() {
 
     // --- LOGICA SFONDI E GRIGLIA ---
     let currentTheme = 0;
-    const themeNames = ["Slate Mist", "Cyber Gradient", "Blueprint", "Stellato", "Dark Default", "Water Flow"];
+    const themeNames = ["Slate Mist", "Cyber Gradient", "Blueprint", "Stellato", "Dark Default", "Box"];
     const themeBtn = document.getElementById('theme-btn');
     const themeLabel = document.getElementById('theme-label');
 
@@ -104,13 +105,29 @@ export function initUI() {
     gridHelper.position.y = -8;
     scene.add(gridHelper);
 
+    const boxMaterials = [
+        new THREE.MeshLambertMaterial({ color: 0xd8d8d8, side: THREE.BackSide }), // Destra
+        new THREE.MeshLambertMaterial({ color: 0xe8e8e8, side: THREE.BackSide }), // Sinistra
+        new THREE.MeshLambertMaterial({ color: 0xcccccc, side: THREE.BackSide }), // Sopra
+        new THREE.MeshLambertMaterial({ color: 0xbbbbbb, side: THREE.BackSide }), // Sotto
+        new THREE.MeshLambertMaterial({ color: 0xd0d0d0, side: THREE.BackSide }), // Fronte
+        new THREE.MeshLambertMaterial({ color: 0xe0e0e0, side: THREE.BackSide })  // Retro
+    ];
+
+    const boxGroup = new THREE.Mesh(
+        new THREE.BoxGeometry(250, 250, 250),
+        boxMaterials
+    );
+    boxGroup.visible = false;
+    scene.add(boxGroup);
+
     const gridToggleBtn = document.getElementById('grid-toggle-btn');
     const gridLabel = document.getElementById('grid-label');
 
     gridToggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         gridHelper.visible = !gridHelper.visible;
-        gridLabel.innerText = gridHelper.visible ? "Griglia: ON" : "Griglia: OFF";
+        gridLabel.innerText = gridHelper.visible ? t('grid_on') : t('grid_off');
         gridToggleBtn.style.borderColor = gridHelper.visible ? '#00aaff' : '#444';
         gridToggleBtn.style.color = gridHelper.visible ? 'white' : '#eee';
         if (typeof forceUpdate === 'function') forceUpdate();
@@ -126,13 +143,15 @@ export function initUI() {
     themeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         currentTheme = (currentTheme + 1) % 6;
-        themeLabel.innerText = "Sfondo: " + themeNames[currentTheme];
+        themeLabel.innerText = t('theme_label') + t('theme_' + currentTheme);
 
         scene.background = null;
         starField.visible = false;
         container.className = '';
         scene.fog = null;
         container.style.background = '';
+        document.body.classList.remove('theme-box');
+        boxGroup.visible = false;
 
         scene.children.forEach(c => { if (c.isGridHelper && c !== gridHelper) scene.remove(c); });
 
@@ -165,8 +184,9 @@ export function initUI() {
         }
         else if (currentTheme === 5) {
             scene.background = null;
-            container.classList.add('bg-water-flow');
-            scene.fog = new THREE.FogExp2(0x004d7a, 0.015);
+            container.classList.add('bg-box');
+            document.body.classList.add('theme-box');
+            boxGroup.visible = true;
         }
 
         if (typeof forceUpdate === 'function') forceUpdate();
@@ -186,7 +206,7 @@ export function initUI() {
         helpPages.forEach((p, i) => p.classList.toggle('active', i === currentHelpPage));
         helpDots.forEach((d, i) => d.classList.toggle('active', i === currentHelpPage));
         helpPrev.disabled = currentHelpPage === 0;
-        helpNext.innerText = currentHelpPage === helpPages.length - 1 ? "Chiudi" : "Avanti >";
+        helpNext.innerText = currentHelpPage === helpPages.length - 1 ? t('btn_close') : t('btn_next');
         
         const helpContent = document.querySelector('.help-content');
         if (helpContent) {
@@ -204,4 +224,11 @@ export function initUI() {
     });
     helpPrev.addEventListener('click', () => { if (currentHelpPage > 0) { currentHelpPage--; updateHelpUI(); } });
     helpModal.addEventListener('click', (e) => { if (e.target === helpModal) helpModal.classList.remove('visible'); });
+
+    // Aggiorna i testi dinamici quando cambia la lingua
+    window.addEventListener('languageChanged', () => {
+        gridLabel.innerText = gridHelper.visible ? t('grid_on') : t('grid_off');
+        themeLabel.innerText = t('theme_label') + t('theme_' + currentTheme);
+        if (helpNext) helpNext.innerText = currentHelpPage === helpPages.length - 1 ? t('btn_close') : t('btn_next');
+    });
 }

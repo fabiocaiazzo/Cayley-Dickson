@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { scene, sphereGeom, sphereMat, sphereMatCenter, animatedMaterials, flowVertexShader, neonFragmentShader, pts, pointObjects, tripletVisuals } from './scene.js';
 import { forceUpdate, resetView } from './main.js';
+import { t } from './i18n.js';
 
 // --- 32-IONI LOGIC ---
 window.is32IonMode = false;
@@ -157,7 +158,7 @@ export const toggle32Ions = function () {
         }
         tripletVisuals.forEach(t => { t.mesh.visible = false; if (t.hitMesh) t.hitMesh.visible = false; });
 
-        document.getElementById('alg-title-text').innerHTML = "TRIGINTADUENIONI";
+        document.getElementById('alg-title-text').innerHTML = t('alg_32');
 
         const mobileTrigger = document.getElementById('alg-mobile-trigger');
         if (mobileTrigger) mobileTrigger.innerHTML = "𝕋";
@@ -169,7 +170,7 @@ export const toggle32Ions = function () {
             dot32.className = 'alg-dot active';
             dot32.id = 'alg-dot-32';
             dot32.innerHTML = '𝕋';
-            dot32.title = 'Trigintaduenioni';
+            dot32.title = t('alg_32');
             dot32.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const menu = document.getElementById('alg-dots-list');
@@ -194,9 +195,9 @@ export const toggle32Ions = function () {
         pg32Grid15.style.display = 'none';
         pg32Grid32.style.display = 'grid';
 
-        tabBtnTriplets.innerText = `Terne (${btnContainer32.dataset.count})`;
-        tabBtnFano.innerText = `Piani Fano (${fanoGrid32.dataset.count})`;
-        tabBtnPG32.innerText = `PG(3,2) (${pg32Grid32.dataset.count})`;
+        tabBtnTriplets.innerText = `${t('tab_triplets')} (${btnContainer32.dataset.count})`;
+        tabBtnFano.innerText = `${t('tab_fano')} (${fanoGrid32.dataset.count})`;
+        tabBtnPG32.innerText = `${t('tab_pg32')} (${pg32Grid32.dataset.count})`;
         tabBtnFano.style.display = 'flex';
         tabBtnPG32.style.display = 'flex';
 
@@ -280,8 +281,8 @@ export function build32IonGraph(centerIdx) {
         graph32Group.remove(child);
     });
 
-    const R = 14; 
-    const H = 10; 
+    const R = 7; 
+    const H = 5; 
     const centerPos = new THREE.Vector3(0, 3, 0);
 
     const centerMesh = new THREE.Mesh(sphereGeom, sphereMatCenter);

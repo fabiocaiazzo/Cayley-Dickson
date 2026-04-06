@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { t } from './i18n.js';
 
 // --- 3D SCENE ---
 const container = document.getElementById('canvas-container');
@@ -9,7 +10,7 @@ const container = document.getElementById('canvas-container');
 container.style.backgroundColor = '#2b3a42';
 // FIX LABEL: Imposta il nome dello sfondo iniziale nel menu
 const lblRef = document.getElementById('theme-label');
-if (lblRef) lblRef.innerText = "Sfondo: Slate Mist";
+if (lblRef) lblRef.innerText = t('theme_label') + t('theme_0');
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2b3a42);

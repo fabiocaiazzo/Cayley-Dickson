@@ -277,7 +277,7 @@ export function visualizeFanoPlane(planeIdx, fromCalculator = false) {
 }
 
 export function highlightConnections(pointId) {
-    document.getElementById('dock-show-all-btn').style.display = 'flex';
+    // Il tasto "Mostra tutto" non deve apparire durante la pressione prolungata temporanea
 
     tripletVisuals.forEach(t => {
         t.mesh.visible = false;

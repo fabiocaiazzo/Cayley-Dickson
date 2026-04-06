@@ -39,7 +39,7 @@ export function setupGrid() {
         inputGrid.innerHTML += `
                     <div class="input-group" id="inp-grp-${i}" style="${customStyle}">
                         <span style="font-size:10px; color:#666; width:25px; text-align:center;">${l}</span>
-                        <input class="num-input" data-idx="${i}" value="0">
+                        <input type="text" inputmode="decimal" class="num-input" data-idx="${i}" value="0">
                     </div>`;
     }
 

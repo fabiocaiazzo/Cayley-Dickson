@@ -2,6 +2,7 @@ import { currentAlgState, resetView } from '../main.js';
 import { currentVar, saveVar } from './calculator_ui.js';
 import { evaluateExpression } from '../parser.js';
 import { highlightConnections } from '../graph.js';
+import { t } from '../i18n.js';
 
 // --- LOGICA PASSAGGI (STEP-BY-STEP) COMPLETA ---
 const stepsOverlay = document.getElementById('steps-overlay');
@@ -105,7 +106,7 @@ window.explainMul = function (A, B) {
 
     // Container header
     html += `<div style="margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #333;">`;
-    html += `<div style="font-size:13px; color:#aaa; margin-bottom:8px;">Componenti attive:</div>`;
+    html += `<div style="font-size:13px; color:#aaa; margin-bottom:8px;">${t('step_active_comp')}</div>`;
 
     if (currentAlg === 15) {
         // LAYOUT SEDENIONI: GRIGLIA 6 colonne x 3 righe
@@ -135,12 +136,12 @@ window.explainMul = function (A, B) {
     // --- CONTENUTI ---
     activeIndices.forEach((k, i) => {
         const displayStyle = i === 0 ? 'block' : 'none';
-        const label = k === 0 ? "Reale (1)" : `e<sub>${k}</sub>`;
+        const label = k === 0 ? t('step_real') : `e<sub>${k}</sub>`;
         let totalSum = 0;
         let sumParts = [];
 
         html += `<div id="mul-content-${uid}-${k}" class="mul-content" style="display:${displayStyle}; animation: fadeIn 0.2s;">`;
-        html += `<div style="color:#88ffff; font-size:16px; margin-bottom:10px; font-weight:bold;">Dettaglio ${label}</div>`;
+        html += `<div style="color:#88ffff; font-size:16px; margin-bottom:10px; font-weight:bold;">${t('step_detail')} ${label}</div>`;
 
         groups[k].forEach(item => {
             html += `<div style="color:#e0e0e0; font-family:monospace; font-size:15px; margin-bottom:6px; padding-left:10px; border-left:3px solid #444; line-height:1.4;">${item.line}</div>`;
@@ -155,9 +156,9 @@ window.explainMul = function (A, B) {
         // Somma finale
         html += `<div style="background:#252525; margin-top:12px; padding:8px; border-radius:4px; color:#fff; font-size:14px; border:1px solid #333;">`;
         if (groups[k].length > 1) {
-            html += `<span style="color:#aaa;">Somma: </span> ${sumParts.join(' ')} = <span style="color:#0f8; font-weight:bold; font-size:16px; margin-left:5px;">${parseFloat(totalSum.toFixed(3))}</span>`;
+            html += `<span style="color:#aaa;">${t('step_sum')} </span> ${sumParts.join(' ')} = <span style="color:#0f8; font-weight:bold; font-size:16px; margin-left:5px;">${parseFloat(totalSum.toFixed(3))}</span>`;
         } else {
-            html += `Totale: <span style="color:#0f8; font-weight:bold; font-size:16px; margin-left:5px;">${parseFloat(totalSum.toFixed(3))}</span>`;
+            html += `${t('step_total')} <span style="color:#0f8; font-weight:bold; font-size:16px; margin-left:5px;">${parseFloat(totalSum.toFixed(3))}</span>`;
         }
         html += `</div></div>`;
     });
@@ -177,7 +178,7 @@ window.explainNorm = function (v) {
         }
     });
     return `<div style="margin-top:5px; background:#111; padding:8px; border-radius:4px; font-size:12px; border-left:2px solid #0088ff;">
-                <div style="color:#aaa; font-style:italic;">Formula: &radic;(&sum; v<sub>i</sub><sup>2</sup>)</div>
+                <div style="color:#aaa; font-style:italic;">${t('step_formula')} &radic;(&sum; v<sub>i</sub><sup>2</sup>)</div>
                 <div style="color:#ddd; margin-top:3px;">&radic;( ${squares.join(' + ')} )</div>
                 <div style="color:#ddd;">= &radic;( ${parseFloat(sumSq.toFixed(4))} )</div>
                 <div style="color:#0f8; font-weight:bold; margin-top:2px;">= ${Math.sqrt(sumSq).toFixed(4)}</div>
@@ -190,10 +191,10 @@ window.explainInv = function (v) {
     v.forEach(val => n2 += val * val);
     const conjStr = window.formatVecGlobal(vecConj(v));
     return `<div style="margin-top:5px; background:#111; padding:8px; border-radius:4px; font-size:12px; border-left:2px solid #ffaa00;">
-                <div style="color:#aaa; font-style:italic;">Formula: v<sup>-1</sup> = coniugato(v) / |v|<sup>2</sup></div>
+                <div style="color:#aaa; font-style:italic;">${t('step_formula')} v<sup>-1</sup> = ${t('step_conj').toLowerCase()}(v) / |v|<sup>2</sup></div>
                 <div style="color:#ddd; margin-top:3px;">|v|<sup>2</sup> = ${parseFloat(n2.toFixed(3))}</div>
-                <div style="color:#ddd;">Coniugato = ( ${conjStr} )</div>
-                <div style="color:#fff; margin-top:3px;">Risultato = ( ${conjStr} ) / ${parseFloat(n2.toFixed(3))}</div>
+                <div style="color:#ddd;">${t('step_conj')} = ( ${conjStr} )</div>
+                <div style="color:#fff; margin-top:3px;">${t('step_res')} = ( ${conjStr} ) / ${parseFloat(n2.toFixed(3))}</div>
             </div>`;
 };
 
@@ -205,11 +206,11 @@ window.explainComm = function (a, b) {
     const baStr = window.formatVecGlobal(ba);
 
     return `<div style="margin-top:5px; background:#111; padding:8px; border-radius:4px; font-size:12px; border-left:2px solid #ff5555;">
-                <div style="color:#aaa; font-style:italic;">Formula: [a,b] = (a &middot; b) - (b &middot; a)</div>
-                <div style="margin-top:5px;">1. Calcolo A&middot;B = <span style="color:#88ffff">${abStr}</span></div>
-                <div>2. Calcolo B&middot;A = <span style="color:#ff88ff">${baStr}</span></div>
+                <div style="color:#aaa; font-style:italic;">${t('step_formula')} [a,b] = (a &middot; b) - (b &middot; a)</div>
+                <div style="margin-top:5px;">1. ${t('step_calc')} A&middot;B = <span style="color:#88ffff">${abStr}</span></div>
+                <div>2. ${t('step_calc')} B&middot;A = <span style="color:#ff88ff">${baStr}</span></div>
                 <div style="margin-top:4px; border-top:1px solid #444; padding-top:4px;">
-                    3. Sottrazione: (<span style="color:#88ffff">${abStr}</span>) - (<span style="color:#ff88ff">${baStr}</span>)
+                    3. ${t('step_sub')} (<span style="color:#88ffff">${abStr}</span>) - (<span style="color:#ff88ff">${baStr}</span>)
                 </div>
             </div>`;
 };
@@ -226,17 +227,17 @@ window.explainAssoc = function (a, b, c) {
     const t2 = window.formatVecGlobal(a_bc);
 
     return `<div style="margin-top:5px; background:#111; padding:8px; border-radius:4px; font-size:12px; border-left:2px solid #aa55ff;">
-                <div style="color:#aaa; font-style:italic;">Formula: [a,b,c] = (a&middot;b)&middot;c - a&middot;(b&middot;c)</div>
+                <div style="color:#aaa; font-style:italic;">${t('step_formula')} [a,b,c] = (a&middot;b)&middot;c - a&middot;(b&middot;c)</div>
                 <div style="margin-top:5px;">1. Gruppo (AB)C:</div>
                 <div style="padding-left:10px; color:#888;">a&middot;b = ${window.formatVecGlobal(ab)}</div>
-                <div style="padding-left:10px; color:#88ffff;">Risultato (AB)C = ${t1}</div>
+                <div style="padding-left:10px; color:#88ffff;">${t('step_res')} (AB)C = ${t1}</div>
                 
                 <div style="margin-top:5px;">2. Gruppo A(BC):</div>
                 <div style="padding-left:10px; color:#888;">b&middot;c = ${window.formatVecGlobal(bc)}</div>
-                <div style="padding-left:10px; color:#ff88ff;">Risultato A(BC) = ${t2}</div>
+                <div style="padding-left:10px; color:#ff88ff;">${t('step_res')} A(BC) = ${t2}</div>
 
                 <div style="margin-top:4px; border-top:1px solid #444; padding-top:4px;">
-                    3. Sottrazione: (<span style="color:#88ffff">${t1}</span>) - (<span style="color:#ff88ff">${t2}</span>)
+                    3. ${t('step_sub')} (<span style="color:#88ffff">${t1}</span>) - (<span style="color:#ff88ff">${t2}</span>)
                 </div>
             </div>`;
 };
@@ -251,7 +252,7 @@ window.calcSteps = function () {
     if (!val) return;
 
     if (val.includes('=?') || val.includes('?=') || val.includes('==')) {
-        stepsContent.innerHTML = '<div style="text-align:center; padding:20px; color:#ffaa00; font-style:italic;">I passaggi step-by-step non sono disponibili per le operazioni di confronto (==, =?).<br>Calcola le espressioni singolarmente per vederne lo sviluppo.</div>';
+        stepsContent.innerHTML = `<div style="text-align:center; padding:20px; color:#ffaa00; font-style:italic;">${t('step_err_cmp')}</div>`;
         stepsOverlay.style.display = 'flex';
         return;
     }
@@ -268,7 +269,7 @@ window.calcSteps = function () {
 
         stepsContent.innerHTML = '';
         if (!log || log.length === 0) {
-            stepsContent.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa; font-style:italic;">Nessun passaggio intermedio disponibile.<br>Il risultato è un valore diretto o immediato.</div>';
+            stepsContent.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa; font-style:italic;">${t('step_err_no_step')}</div>`;
         } else {
             log.forEach((step, i) => {
                 let argsHtml = '';
@@ -319,7 +320,7 @@ window.calcSteps = function () {
                 const row = document.createElement('div');
                 row.className = 'step-row';
                 row.innerHTML = `
-                            <div class="step-idx">Passaggio ${i + 1}</div>
+                            <div class="step-idx">${t('step_pass')} ${i + 1}</div>
                             <div style="display:flex; flex-wrap:wrap; align-items:center; margin-bottom:4px;">
                                 ${argsHtml}
                                 <span class="step-arrow">&#10142;</span>
@@ -333,7 +334,7 @@ window.calcSteps = function () {
         stepsOverlay.style.display = 'flex';
 
     } catch (e) {
-        alert("Impossibile mostrare i passaggi: " + e);
+        alert(t('step_err_catch') + " " + e);
         console.error(e);
     }
 };

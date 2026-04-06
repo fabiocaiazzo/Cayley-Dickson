@@ -45,12 +45,14 @@ import './calculator/calculator_core.js';
 import { closeHistory } from './calculator/calculator_history.js';
 import './calculator/calculator_popout.js';
 import { updateZeroDivisorUI, initZeroDivisorListeners } from './calculator/calculator_zerodiv.js';
+import { t } from './i18n.js';
 
 // --- UI LOGIC ---
 // Riferimento al testo del titolo (per aggiornamenti dinamici come Divisori Zero)
 const titleElem = document.getElementById('alg-title-text');
 // Abilita interazione sul titolo (necessario perché il parent #top-bar ha pointer-events: none)
 titleElem.style.pointerEvents = "auto";
+titleElem.style.cursor = "pointer"; // Indica visivamente che l'area è interattiva
 
 export const tripletButtons = [];
 export const fanoButtons = [];
@@ -146,10 +148,15 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Listener Click sul contenitore (Ciclo sequenziale - Attivo solo su Desktop)
-document.getElementById('algebra-switch').addEventListener('click', () => {
+// Listener Click sul contenitore (Ciclo sequenziale su Desktop, Apertura Menu su Mobile)
+document.getElementById('algebra-switch').addEventListener('click', (e) => {
     if (window.innerWidth > 768) {
         updateAlgebraState(null);
+    } else {
+        // Su mobile/finestra ridotta, cliccare sull'intero contenitore apre la tendina
+        e.stopPropagation();
+        const menu = document.getElementById('alg-dots-list');
+        if (menu) menu.classList.toggle('open');
     }
 });
 
@@ -189,15 +196,15 @@ export function filterSubspace(limitIndex) {
     const mobileTrigger = document.getElementById('alg-mobile-trigger');
 
     if (limitIndex === 3) {
-        titleTextElem.innerHTML = "QUATERNIONI";
+        titleTextElem.innerHTML = t('alg_quat');
         if (mobileTrigger) mobileTrigger.innerHTML = "ℍ";
     }
     else if (limitIndex === 7) {
-        titleTextElem.innerHTML = "OTTETTI";
+        titleTextElem.innerHTML = t('alg_oct');
         if (mobileTrigger) mobileTrigger.innerHTML = "𝕆";
     }
     else {
-        titleTextElem.innerHTML = "SEDENIONI";
+        titleTextElem.innerHTML = t('alg_sed');
         if (mobileTrigger) mobileTrigger.innerHTML = "𝕊";
     }
 
@@ -267,27 +274,27 @@ export function updateCalcUI(limitIndex) {
     if (fContainer) {
         fContainer.innerHTML = `
                     <div id="formula-explanation-panel" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(30, 30, 35, 0.98); padding:20px; z-index:20; backdrop-filter:blur(10px); color:#eee; font-size:14px; line-height:1.6; font-family:'Segoe UI', sans-serif; text-align:center; align-items:center; justify-content:center; border-radius: 6px;">
-                        Cliccando una formula, le variabili verranno riempite con valori random dell'algebra corrispondente.
+                        ${t('form_desc')}
                     </div>
                     <div class="formula-group-title" style="color:#aaaaff;">Quaternioni (&#x210D;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(3, '[a,b]', ['a','b'])">
-                        <strong>[a,b] &ne; 0</strong> (Non commutativi)
+                        <strong>[a,b] &ne; 0</strong> ${t('form_non_comm')}
                     </button>
 
                     <div class="formula-group-title" style="color:#aaffaa; margin-top:8px;">Ottetti (&#x1D546;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(7, '[a,b,c]', ['a','b','c'])">
-                        <strong>[a,b,c] &ne; 0</strong> (Non associativi)
+                        <strong>[a,b,c] &ne; 0</strong> ${t('form_non_assoc')}
                     </button>
                     <button class="formula-btn" onclick="runFormulaDemo(7, '[a,a,b]', ['a','b'])">
-                        <strong>[a,a,b] = 0</strong> (Alternativi)
+                        <strong>[a,a,b] = 0</strong> ${t('form_alt')}
                     </button>
 
                     <div class="formula-group-title" style="color:#ffaaaa; margin-top:8px;">Sedenioni (&#x1D54A;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(15, '[a,a,b]', ['a','b'])">
-                        <strong>[a,a,b] &ne; 0</strong> (Non alternativi)
+                        <strong>[a,a,b] &ne; 0</strong> ${t('form_non_alt')}
                     </button>
                     <button class="formula-btn" onclick="runFormulaDemo(15, '[a,b,a]', ['a','b'])">
-                        <strong>[a,b,a] = 0</strong> (Flessibili)
+                        <strong>[a,b,a] = 0</strong> ${t('form_flex')}
                     </button>
                 `;
     }
@@ -692,7 +699,7 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
             renderer.domElement.dataset.holdTimer = setTimeout(() => {
                 highlightConnections(data.id);
                 isHoldingPoint = true;
-            }, 200);
+            }, 450); // Aumentato da 200 a 450ms per supportare i click del trackpad
             renderer.domElement.dataset.lastClickedNode = data.id;
             renderer.domElement.dataset.lastClickedType = 'point';
         }
@@ -703,44 +710,56 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
 });
 
 window.addEventListener('pointerup', (e) => {
-    const dist = Math.hypot(e.clientX - clickStartX, e.clientY - clickStartY);
+        const dist = Math.hypot(e.clientX - clickStartX, e.clientY - clickStartY);
 
-    if (renderer.domElement.dataset.holdTimer) {
-        clearTimeout(parseInt(renderer.domElement.dataset.holdTimer));
-        renderer.domElement.dataset.holdTimer = null;
-    }
-
-    // GESTIONE CLICK 32-IONI
-    if (window.is32IonMode) {
-        if (dist < 10 && renderer.domElement.dataset.lastClickedType === 'node32') {
-            const id = parseInt(renderer.domElement.dataset.lastClickedNode);
-            build32IonGraph(id); // Ricalcola e rimette al centro il nodo cliccato
+        if (renderer.domElement.dataset.holdTimer) {
+            clearTimeout(parseInt(renderer.domElement.dataset.holdTimer));
+            renderer.domElement.dataset.holdTimer = null;
         }
-        return; // Ferma l'esecuzione per non innescare codice relativo ai sedenioni
-    }
 
-    // GESTIONE CLICK STANDARD
-    // Azzera flag hold perché l'azione si è conclusa
-    isHoldingPoint = false;
+        // GESTIONE CLICK 32-IONI
+        if (window.is32IonMode) {
+            if (dist < 10 && renderer.domElement.dataset.lastClickedType === 'node32') {
+                const id = parseInt(renderer.domElement.dataset.lastClickedNode);
+                build32IonGraph(id); // Ricalcola e rimette al centro il nodo cliccato
+            }
+            return; // Ferma l'esecuzione per non innescare codice relativo ai sedenioni
+        }
 
-    if (dist < 10) {
-        // Controlla se abbiamo cliccato un nodo (sia tap veloce che tenendo premuto)
-        if (renderer.domElement.dataset.lastClickedNode && renderer.domElement.dataset.lastClickedType === 'point') {
-            const id = parseInt(renderer.domElement.dataset.lastClickedNode);
-            if (selectedNodesForClosure.has(id)) {
-                selectedNodesForClosure.delete(id);
+        // GESTIONE CLICK STANDARD
+        // Salviamo lo stato prima di resettarlo per capire se stavamo ispezionando un nodo
+        const wasHolding = isHoldingPoint; 
+        isHoldingPoint = false;
+
+        if (dist < 10) {
+            // Controlla se abbiamo cliccato un nodo
+            if (renderer.domElement.dataset.lastClickedNode && renderer.domElement.dataset.lastClickedType === 'point') {
+                const id = parseInt(renderer.domElement.dataset.lastClickedNode);
+                
+                // Seleziona il nodo SOLO se è stato un tap rapido. Se stavamo tenendo premuto per ispezionare, non selezioniamo.
+                if (!wasHolding) {
+                    if (selectedNodesForClosure.has(id)) {
+                        selectedNodesForClosure.delete(id);
+                    } else {
+                        selectedNodesForClosure.add(id);
+                    }
+                }
+                
+                // Usiamo resetView per aggiornare i colori istantaneamente e ripristinare le connessioni al rilascio
+                resetView();
             } else {
-                selectedNodesForClosure.add(id);
+                // Cliccato sullo sfondo: pulisci la selezione e resetta
+                if (selectedNodesForClosure.size > 0 || wasHolding) {
+                    selectedNodesForClosure.clear();
+                    resetView();
+                }
             }
-            filterSubspace(currentAlgState);
         } else {
-            // Cliccato sullo sfondo: pulisci la selezione
-            if (selectedNodesForClosure.size > 0) {
-                selectedNodesForClosure.clear();
-                filterSubspace(currentAlgState);
+            // Se l'utente ha mosso il grafico (dist >= 10) mentre teneva premuto, ripristina la visuale al rilascio
+            if (wasHolding) {
+                resetView();
             }
         }
-    }
 
     const genBtn = document.getElementById('closure-generator-btn');
     const genDiv = document.getElementById('closure-divider');
@@ -1084,8 +1103,8 @@ if (closureBtn) {
         document.getElementById('dock-show-all-btn').style.display = 'flex';
 
         const titleTextElem = document.getElementById('alg-title-text');
-        const mainTitle = (currentAlgState === 3 ? "QUATERNIONI" : (currentAlgState === 7 ? "OTTETTI" : "SEDENIONI"));
-        titleTextElem.innerHTML = `${mainTitle}<div style="font-size: 13px; font-weight: normal; color: #00ffaa; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9;">Generazione Chiusura in corso...</div>`;
+        const mainTitle = (currentAlgState === 3 ? t('alg_quat') : (currentAlgState === 7 ? t('alg_oct') : t('alg_sed')));
+        titleTextElem.innerHTML = `${mainTitle}<div style="font-size: 13px; font-weight: normal; color: #00ffaa; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9;">${t('gen_closure')}</div>`;
 
         tripletVisuals.forEach(t => { t.mesh.visible = false; if (t.hitMesh) t.hitMesh.visible = false; });
         for (let k in pointObjects) { pointObjects[k].mesh.visible = false; pointObjects[k].label.visible = false; }
@@ -1107,17 +1126,17 @@ if (closureBtn) {
                 let fanoSubtitle = "";
 
                 if (nodesStr === "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15") {
-                    fanoSubtitle = "Chiusura: &#x1D54A;"; // Sedenioni S
+                    fanoSubtitle = `${t('closure_lbl')} &#x1D54A;`; // Sedenioni S
                 }
                 else if (nodesStr === "1,2,3,4,5,6,7") {
-                    fanoSubtitle = "Chiusura: &#x1D546;"; // Ottetti O
+                    fanoSubtitle = `${t('closure_lbl')} &#x1D546;`; // Ottetti O
                 }
                 else if (nodesStr === "1,2,3") {
-                    fanoSubtitle = "Chiusura: &#x210D;"; // Quaternioni H
+                    fanoSubtitle = `${t('closure_lbl')} &#x210D;`; // Quaternioni H
                 }
                 else {
                     // Caso generico (es. copia isomorfa o subalgebra non standard)
-                    fanoSubtitle = "Chiusura: {" + finalNodes.map(i => "e<sub>" + i + "</sub>").join(", ") + "}";
+                    fanoSubtitle = `${t('closure_lbl')} {` + finalNodes.map(i => "e<sub>" + i + "</sub>").join(", ") + "}";
                 }
 
                 titleTextElem.innerHTML = `${mainTitle}<div style="font-size: 13px; font-weight: normal; color: #ccc; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9; text-transform: none;">${fanoSubtitle}</div>`;
