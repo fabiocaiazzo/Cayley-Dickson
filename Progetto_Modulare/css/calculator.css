@@ -1,0 +1,945 @@
+/* --- SHIFT KEYPAD STYLES --- */
+.key-primary {
+    display: block;
+    pointer-events: none;
+}
+
+.key-secondary {
+    display: none;
+    color: #aabbcc;
+    font-size: 11px;
+    font-weight: bold;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+.shift-active .key-primary {
+    display: none;
+}
+
+.shift-active .key-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.shift-active .key-secondary.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.shift-active .key-eval {
+    background: #4444aa !important;
+    border-color: #5555cc !important;
+}
+
+.key-2nd {
+    background: #776600 !important;
+    color: #ffdd00 !important;
+    border-color: #998800 !important;
+    font-weight: bold;
+}
+
+.key-2nd.active {
+    background: #998800 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    border-color: #bbcc00 !important;
+}
+
+/* --- CALCULATOR HUD (Floating Glass Panel) --- */
+#calc-modal {
+    display: none;
+    position: fixed;
+    top: 80px;
+    left: 30px;
+    transform: none;
+
+    width: 360px;
+    height: 520px;
+
+    background: rgba(13, 15, 20, 0.95);
+    /* Leggermente più opaco */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 3px solid #00aaff;
+    /* Accento superiore più evidente */
+    border-bottom: 2px solid rgba(0, 170, 255, 0.2);
+
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 170, 255, 0.05);
+
+    z-index: 2000;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    transition: opacity 0.2s, transform 0.2s;
+    cursor: move;
+    /* Tutto il corpo è draggabile */
+}
+
+@keyframes hudOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Sposta icona cronologia nel display */
+#toggle-history-btn {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 10;
+    opacity: 0.7;
+    transform: scale(0.8);
+}
+
+#toggle-history-btn:hover {
+    opacity: 1;
+    transform: scale(0.9);
+}
+
+/* Icona pop-out calcolatrice */
+#popout-calc-btn {
+    position: absolute;
+    top: 36px;
+    left: 6px;
+    z-index: 10;
+    opacity: 0.7;
+    transform: scale(0.8);
+}
+
+#popout-calc-btn:hover {
+    opacity: 1;
+    transform: scale(0.9);
+}
+
+/* Nasconde il tasto pop-out su schermi tablet e mobile (fino a 1024px) */
+@media (max-width: 1024px) {
+    #popout-calc-btn {
+        display: none !important;
+    }
+
+    #mobile-vars-btn {
+        display: flex !important;
+    }
+
+    #back-to-keypad-btn {
+        display: none !important;
+    }
+}
+
+/* Stile icona variabili per Mobile (condivide la stessa posizione del popout su desktop) */
+#mobile-vars-btn {
+    position: absolute;
+    top: 36px;
+    left: 6px;
+    z-index: 10;
+    opacity: 0.7;
+    transform: scale(0.8);
+    display: none;
+    /* Nascosto su PC di default */
+}
+
+#mobile-vars-btn:hover {
+    opacity: 1;
+    transform: scale(0.9);
+}
+
+.calc-view {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.calc-view.active {
+    display: flex;
+}
+
+#calc-modal.active {
+    display: flex;
+}
+
+.calc-header {
+    /* Padding aumentato a 12px per allineare i tasti con lo schermo nero sottostante */
+    padding: 5px 12px;
+    background: #2a2a30;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    height: 50px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    gap: 5px;
+}
+
+.calc-mode-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    position: relative;
+    min-width: 0;
+    /* Permette al contenuto di restringersi se serve */
+}
+
+/* Forza il selettore a non essere più largo del necessario */
+#calc-alg-select {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
+}
+
+.calc-mode-sel {
+    background: #0066cc;
+    color: white;
+    border: 1px solid #0088ff;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    /* Impedisce alla freccia di andare a capo */
+    width: auto;
+    /* Si adatta al contenuto (H/O/S) */
+    min-width: fit-content;
+}
+
+/* --- MENU FORMULE CALCOLATRICE (Spostato e adattato) --- */
+#calc-formula-menu {
+    position: absolute;
+    /* Posizione relativa al nuovo contenitore in view-vars */
+    top: 45px;
+    left: 10px;
+    background: rgba(30, 30, 35, 0.98);
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 10px;
+    width: 240px;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    z-index: 2500;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    /* FIX: Evita che il padding sommandosi al 100% esca dallo schermo */
+}
+
+#calc-formula-menu.visible,
+#calc-zerodiv-menu.visible {
+    display: flex;
+    animation: fadeInMenu 0.2s ease-out;
+}
+
+/* Stile specifico per il menu divisori zero */
+/* --- OVERLAY DIVISORI ZERO --- */
+#zerodiv-overlay {
+    position: absolute;
+    top: 0;
+    /* Modificato: Copre intera calcolatrice */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(25, 20, 20, 0.98);
+    z-index: 2600;
+    /* Sopra al calc-body */
+    display: none;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+}
+
+#zerodiv-overlay.visible {
+    display: flex;
+    animation: fadeInMenu 0.2s ease-out;
+}
+
+#zerodiv-content-grid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden; /* Blocca la scrollbar orizzontale */
+    padding: 6px 4px; /* Recupera spazio ai lati */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 PER RIGA */
+    gap: 4px; /* Restringe lo spazio tra i tasti */
+    align-content: start;
+}
+
+/* --- Stile Scrollbar Scura e Sottile per PC --- */
+#zerodiv-content-grid::-webkit-scrollbar {
+    width: 6px;
+}
+#zerodiv-content-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+#zerodiv-content-grid::-webkit-scrollbar-thumb {
+    background: rgba(0, 170, 255, 0.3);
+    border-radius: 3px;
+}
+#zerodiv-content-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 170, 255, 0.6);
+}
+
+.zerodiv-grid-btn {
+    background: rgba(30, 35, 40, 0.6);
+    color: #aaccff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px 0px; /* Azzerato il padding laterale per sfruttare tutto il tasto */
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12.5px; /* Testo nettamente più grande e leggibile */
+    letter-spacing: -0.5px; /* Compensa l'ingrandimento avvicinando i caratteri */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.2s;
+    min-height: 40px;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.zerodiv-grid-btn sub {
+    font-size: 0.95em; /* Reso leggermente più grande anche il pedice */
+    vertical-align: baseline;
+    position: relative;
+    top: 0.3em;
+    margin-left: 0px; /* Rimosso margine per risparmiare spazio orizzontale */
+}
+
+.zerodiv-grid-btn:hover {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: #00aaff;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 136, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.zerodiv-grid-btn:active {
+    transform: scale(0.95);
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* MODIFICA: Aggiunto Flexbox, Width e Height per forzare l'allineamento al centro esatto */
+.icon-btn {
+    cursor: pointer;
+    font-size: 18px;
+    color: #aaa;
+    transition: 0.2s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.icon-btn:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.icon-btn.active {
+    color: #00aaff;
+    text-shadow: 0 0 5px #00aaff;
+}
+
+.calc-body {
+    flex: 1;
+    padding: 12px;
+    overflow: hidden;
+    color: #ddd;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* --- TERMINAL DISPLAY --- */
+.display-area {
+    background: #050505;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    /* Ombra interna profonda */
+}
+
+/* Linea sottile verde a sinistra per decorazione */
+.display-area::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    bottom: 10%;
+    width: 2px;
+    background: #00ffaa;
+    opacity: 0.5;
+}
+
+#expression-display {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Contenitore relativo per allineare input e evidenziatore */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* STILE CONDIVISO: Fondamentale per l'allineamento pixel-perfect */
+#expression-display,
+#highlight-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* Proprietà Font IDENTICHE */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0px;
+
+    /* Spaziatura IDENTICA */
+    padding: 0 4px 0 35px;
+    /* Padding Sx aumentato per evitare l'icona cronologia */
+    margin: 0;
+    border: none;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+#expression-display {
+    background: transparent;
+    color: #ddd;
+    outline: none;
+    z-index: 2;
+}
+
+#highlight-layer {
+    color: transparent;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    background: transparent;
+}
+
+/* Stili per le parentesi evidenziate */
+.hl-match {
+    background-color: rgba(0, 136, 255, 0.4);
+    color: transparent;
+    /* Testo invisibile, mostra solo sfondo */
+    border-radius: 2px;
+    box-shadow: 0 0 4px #0088ff;
+    /* Rimosso bold per evitare disallineamenti di larghezza */
+}
+
+.hl-error {
+    background-color: rgba(255, 50, 50, 0.5);
+    color: transparent;
+    /* Testo invisibile, mostra solo sfondo */
+    border-radius: 2px;
+}
+
+#result-display {
+    width: 100%;
+    padding: 0 4px 0 35px; /* Margine interno sinistro per salvare le icone */
+    box-sizing: border-box; /* Obbliga a non sformare la larghezza col padding */
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: right;
+    height: 40px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #00aa66 transparent;
+    white-space: normal;
+    word-break: normal; /* Usa le regole standard di default a capo, no taglio parole */
+    line-height: 1.2;
+}
+
+
+.var-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0;
+    flex-shrink: 0;
+}
+
+.var-tab {
+    flex: 1;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-top: 2px solid #444;
+    border-bottom: none;
+    color: #888;
+    padding: 6px 2px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    font-size: 11px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.var-tab:hover {
+    background: #333;
+}
+
+.var-tab.active {
+    background: #333;
+    color: white;
+    border-top: 2px solid #0088ff;
+}
+
+.vector-inputs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(10, 15, 20, 0.6);
+    border: 1px solid rgba(0, 170, 255, 0.15);
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+/* Effetto focus sugli input */
+.input-group:focus-within {
+    border-color: #00aaff;
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+    background: rgba(0, 20, 40, 0.8);
+}
+
+.input-group.hidden {
+    display: none;
+}
+
+.num-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #00aaff;
+    /* Colore digitale */
+    text-align: right;
+    font-family: 'Consolas', monospace;
+    font-weight: bold;
+    outline: none;
+    font-size: 12px;
+    text-shadow: 0 0 2px rgba(0, 170, 255, 0.3);
+}
+
+/* --- TASTIERA TOUCH --- */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: none;
+    flex-shrink: 0;
+}
+
+.key-btn {
+    background: rgba(40, 45, 50, 0.4);
+    color: #aabbcc;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    height: 44px;
+    /* Altezza fissa per consistenza */
+    border-radius: 2px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Aggiunto per posizionare l'indicatore */
+}
+
+.var-indicator {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: #00ffaa;
+    border-radius: 50%;
+    display: none;
+    box-shadow: 0 0 5px #00ffaa;
+    pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-btn:hover {
+        background: #3a3a3a;
+    }
+}
+
+
+.key-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-eval:hover {
+        background: rgba(0, 255, 170, 0.3);
+        box-shadow: 0 0 15px rgba(0, 255, 170, 0.2);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-del:hover {
+        background: rgba(255, 50, 50, 0.3);
+    }
+}
+
+/* Variabili Tabs in alto (Vars view) */
+.calc-view-tabs {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    margin: 0 -12px 10px -12px;
+    padding: 0 12px 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.view-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #667788;
+    border-radius: 0;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+
+.view-tab-btn.active {
+    background: transparent;
+    color: #00aaff;
+    border-bottom: 2px solid #00aaff;
+    box-shadow: none;
+}
+
+.calc-action-btn {
+    background: #2a2a30;
+    border: 1px solid #444;
+    color: #ccc;
+    padding: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    font-size: 11px;
+    font-weight: bold;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.calc-action-btn:hover {
+    background: #3a3a40;
+    color: white;
+    border-color: #0088ff;
+}
+
+.calc-action-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(0, 170, 255, 0.3) !important;
+    border-color: rgba(0, 170, 255, 0.6) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-btn:hover {
+        background: #3a3a3a;
+    }
+}
+
+.key-num {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #eee;
+}
+
+.key-op {
+    background: #2a2a2a;
+}
+
+.key-eval {
+    background: #008855;
+    border-color: #00aa66;
+}
+
+.key-del {
+    background: #662222;
+}
+
+#history-overlay {
+    position: absolute;
+    /* Modificato: Copre tutto lo spazio */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 15, 20, 0.98);
+    z-index: 3000;
+    /* Aumentato per coprire i tasti vista (z-index 2500) */
+    /* Sopra a tutto */
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    /* Match bordi calcolatrice */
+    backdrop-filter: blur(10px);
+}
+
+#history-overlay.open {
+    transform: translateX(0);
+}
+
+.history-header {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    background: #25252a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: white;
+}
+
+#calc-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.log-entry {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.log-entry:hover {
+    border-color: #0088ff;
+    background: #222;
+}
+
+.log-expr {
+    color: #888;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.log-res {
+    color: #0f8;
+    font-family: monospace;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+/* STEPS STYLING */
+.step-row {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+}
+
+.step-row:nth-child(even) {
+    background: #222;
+}
+
+.step-idx {
+    color: #888;
+    font-size: 10px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.step-op {
+    color: #aaaaff;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.step-val {
+    color: #ddd;
+    font-family: monospace;
+}
+
+.step-res {
+    color: #0f8;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.step-arrow {
+    color: #666;
+    margin: 0 5px;
+}
+
+
+
+/* --- FORMULA BUTTONS & HORIZONTAL RESIZER --- */
+#formula-container {
+    padding: 10px;
+    background: #1b1b20;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 50px;
+}
+
+#table-resizer,
+#triplets-resizer {
+    height: 16px;
+    width: 100%;
+    background: #2a2a30;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+    position: relative;
+    touch-action: none;
+    z-index: 10;
+}
+
+#table-resizer::after,
+#triplets-resizer::after {
+    content: '';
+    width: 40px;
+    height: 4px;
+    background: #0088ff;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(0, 136, 255, 0.5);
+}
+
+#table-resizer:hover::after,
+#triplets-resizer:hover::after {
+    background: #33aaff;
+    width: 60px;
+}
+
+.formula-group-title {
+    color: #888;
+    font-size: 11px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.formula-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    /* FIX: Impedisce ai tasti di strabordare a destra */
+    text-align: left;
+    background: #25252a;
+    color: #ddd;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Times New Roman', serif;
+    font-size: 13px;
+    font-style: italic;
+    transition: all 0.2s;
+}
+
+.formula-btn:hover {
+    background: #333;
+    border-color: #0088ff;
+    color: white;
+    transform: translateX(2px);
+}
+
+.formula-btn strong {
+    font-family: 'Segoe UI', sans-serif;
+    font-style: normal;
+    font-size: 11px;
+    color: white;
+    margin-right: 5px;
+}

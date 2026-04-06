@@ -1,0 +1,442 @@
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100dvh;
+        }
+
+        /* --- LAYOUT --- */
+        #main-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            /* Fallback per browser molto vecchi */
+            height: 100dvh;
+            /* Adatta l'altezza dinamicamente alle barre del browser */
+            overflow: hidden;
+            position: relative;
+        }
+
+        #canvas-container {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            background-color: #1a1a1a;
+            transition: background 0.5s ease;
+        }
+
+
+        /* --- SFONDI AMBIENTALI --- */
+        /* 1. Slate Mist */
+        .bg-default {
+            background-color: #2b3a42;
+        }
+
+        /* 2. Cyber Gradient */
+        .bg-deep-space {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        /* 3. Blueprint (Sostituisce il bianco) */
+        .bg-studio {
+            background-color: #001a33;
+            background-image: radial-gradient(#002b55 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* 4. Moving Water */
+        .bg-water-flow {
+            background: linear-gradient(-45deg, #001e36, #004d7a, #008793, #00a8cc);
+            background-size: 400% 400%;
+            animation: waterAnim 15s ease infinite;
+        }
+
+        @keyframes waterAnim {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* --- TOP BAR (Algebra Switcher) --- */
+        #top-bar {
+            position: absolute;
+            top: calc(20px + env(safe-area-inset-top));
+            left: 20px;
+            z-index: 50;
+            pointer-events: auto;
+            /* Importante per i click */
+        }
+
+        #algebra-switch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 15, 20, 0.7);
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-left: 4px solid #00aaff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #algebra-switch:hover {
+            background: rgba(10, 15, 20, 0.9);
+            border-color: #00aaff;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.2);
+        }
+
+        .alg-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .alg-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #556677;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI Symbol', 'Cambria Math', serif;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Effetto rimbalzo */
+        }
+
+        .alg-dot:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Stato Attivo (Illuminato) */
+        .alg-dot.active {
+            background: #00aaff;
+            border-color: #0088ff;
+            color: #001a33;
+            /* Testo scuro su sfondo luminoso */
+            box-shadow: 0 0 10px #00aaff;
+            transform: scale(1.15);
+        }
+
+        .alg-dots-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- STILI DROPDOWN MOBILE --- */
+        @media (max-width: 768px) {
+            #alg-mobile-trigger {
+                display: flex !important;
+                z-index: 60;
+            }
+
+            #alg-dots-list {
+                position: absolute;
+                top: 45px;
+                /* Sotto il bottone */
+                left: -5px;
+                flex-direction: column;
+                background: rgba(10, 15, 20, 0.95);
+                border: 1px solid rgba(0, 170, 255, 0.3);
+                border-radius: 8px;
+                padding: 8px;
+                gap: 8px;
+                backdrop-filter: blur(10px);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.2s ease;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+                z-index: 100;
+            }
+
+            #alg-dots-list.open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            /* Disabilita il click globale sul contenitore su mobile per evitare salti di algebra involontari */
+            #algebra-switch {
+                pointer-events: none;
+            }
+
+            #algebra-switch>* {
+                pointer-events: auto;
+                /* Riabilita il click solo sui figli */
+            }
+
+            #alg-title-text {
+                min-width: 0;
+                /* Fondamentale: permette alla barra di restringersi dinamicamente */
+                padding-left: 10px;
+                font-size: 13px;
+                letter-spacing: 1px;
+            }
+        }
+
+        #alg-title-text {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: white;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 15px;
+            min-width: 140px;
+            /* Evita che il testo balli cambiando lunghezza */
+        }
+
+        #main-title:hover {
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(0, 200, 255, 0.8);
+            border-left-color: #ffffff;
+        }
+
+        #main-title div {
+            font-size: 11px !important;
+            color: #88aacc !important;
+            margin-top: 4px;
+        }
+
+        /* --- 3D LABELS --- */
+        .label {
+            color: #fff;
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 18px;
+            text-shadow: 0 0 3px black;
+            pointer-events: none;
+            user-select: none;
+        }
+
+
+
+        /* --- HELP MODAL --- */
+        #help-modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #help-modal.visible {
+            display: flex;
+        }
+
+        .help-container {
+            width: 600px;
+            max-width: 95%;
+            height: 450px;
+            max-height: 70vh;
+            background: #25252b;
+            border: 1px solid #555;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .help-header {
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            background: #2a2a30;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .help-content {
+            flex: 1;
+            padding: 20px;
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        .help-page {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .help-page.active {
+            display: block;
+        }
+
+        .help-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #444;
+            background: #2a2a30;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .help-nav-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .help-nav-btn:hover {
+            background: #666;
+        }
+
+        .help-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .help-indicators {
+            display: flex;
+            gap: 5px;
+        }
+
+        .help-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #444;
+        }
+
+        .help-dot.active {
+            background: #0088ff;
+        }
+
+        .help-icon-inline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 12px;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- FIX CAROUSEL MOBILE --- */
+        @media (max-width: 768px) {
+            #carousel-track {
+                position: relative;
+                flex: 1;
+                width: 100%;
+                min-width: 0;
+                overflow: hidden;
+                display: grid;
+                grid-template-columns: 100%;
+                /* Forza la larghezza esatta per evitare straripamenti */
+                grid-template-rows: 100%;
+                /* Forza l'altezza esatta */
+                touch-action: pan-y;
+            }
+
+            .carousel-panel {
+                grid-area: 1 / 1;
+                position: relative;
+                width: 100%;
+                height: 100%;
+                min-width: 0;
+                max-width: 100%;
+                /* Impedisce che il contenuto allarghi il pannello invadendo gli altri */
+                display: flex;
+                flex-direction: column;
+                will-change: transform;
+                padding: 0 5px;
+                box-sizing: border-box;
+                /* Forza il rendering tramite GPU per azzerare la latenza visiva */
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                transform: translateZ(0);
+            }
+
+            /* Assicura che i contenuti non allarghino orizzontalmente le schermate */
+            #carousel-track>* {
+                min-width: 0;
+                overflow-x: hidden;
+            }
+
+            /* Applica questi stili SOLO quando i pannelli sono stati spostati nel carousel */
+            #carousel-track #zerodiv-overlay,
+            #carousel-track #calc-formula-menu {
+                position: relative !important;
+                top: auto !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                width: 100% !important;
+                height: 100% !important;
+                transform: none !important;
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                z-index: 1 !important;
+                max-height: none !important;
+            }
+
+            #carousel-track #close-zerodiv-overlay {
+                display: none !important;
+            }
+
+            /* FIX MOBILE: Nasconde l'intera barra superiore rossa (titolo e ?) dei divisori su mobile per recuperare spazio */
+            #carousel-track #zerodiv-overlay>div:first-child {
+                display: none !important;
+            }
+
+            /* Nascondi forzatamente i pannelli fuori dal carousel per evitare esplosioni del layout originale */
+            #calc-modal>#zerodiv-overlay,
+            .calc-body>#calc-formula-menu {
+                display: none !important;
+            }
+        }

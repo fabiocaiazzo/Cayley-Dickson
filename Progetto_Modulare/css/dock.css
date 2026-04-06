@@ -1,0 +1,576 @@
+/* --- BOTTOM DOCK (Glassmorphism) --- */
+#app-dock {
+    position: absolute;
+    bottom: env(safe-area-inset-bottom);
+    /* Attaccato al fondo */
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 300px;
+    padding: 0 30px;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    /* Bordi arrotondati */
+    height: 70px;
+
+    /* Glass Effect */
+    background: rgba(20, 25, 30, 0.3);
+    /* Molto più trasparente */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Bordo sottile ovunque */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    /* Ombra morbida */
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    z-index: 5000;
+    /* FIX: Sempre sopra la calcolatrice */
+}
+
+.dock-group {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    width: auto;
+}
+
+.dock-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 10px;
+}
+
+.ui-btn {
+    width: 48px;
+    height: 48px;
+    background: rgba(30, 35, 40, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #8899aa;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+}
+
+/* Hover Glow Effect */
+.ui-btn:hover {
+    background: rgba(0, 170, 255, 0.1);
+    border-color: rgba(0, 170, 255, 0.4);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.15);
+    transform: translateX(-3px);
+}
+
+/* Active State (Emerald/Cyan) */
+.ui-btn.active {
+    background: rgba(0, 255, 170, 0.15);
+    border-color: #00ffaa;
+    color: #00ffaa;
+    box-shadow: 0 0 20px rgba(0, 255, 170, 0.2);
+}
+
+.icon-svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+/* Nascondi i vecchi controlli mobile se presenti */
+#mobile-bottom-controls {
+    display: none !important;
+}
+
+/* Classe per nascondere forzatamente il tooltip via JS */
+.ui-btn.hide-tooltip::after {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Tooltip al passaggio del mouse (sopra la dock) */
+.ui-btn::after {
+    content: attr(data-tooltip);
+    /* Usa data-tooltip invece di title */
+    position: absolute;
+    bottom: 65px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: normal;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.2s;
+    visibility: hidden;
+    z-index: 1000;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .ui-btn:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        visibility: visible;
+    }
+}
+
+@media (max-width: 768px) {
+    .ui-btn:active::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        visibility: visible;
+        transition-delay: 0.5s;
+        /* Mostra solo dopo mezza frazione di secondo (pressione lunga) */
+    }
+
+    .ui-btn:hover {
+        background: rgba(30, 35, 40, 0.4);
+        /* Rimuove effetto hover bloccato su mobile */
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow: none;
+        transform: none;
+    }
+
+    .ui-btn.active {
+        background: rgba(0, 255, 170, 0.15);
+        border-color: #00ffaa;
+    }
+}
+
+/* FIX UX: Impedisce la selezione del testo (effetto blu) su pulsanti e titoli */
+/* FIX UX: Impedisce la selezione del testo (effetto blu) su pulsanti, pannelli e titoli */
+.ui-btn,
+#main-title,
+.tab-btn,
+.triplet-btn,
+.zerodiv-btn,
+.setting-action,
+.menu-btn,
+#sidebar-resizer,
+.key-btn,
+.calc-action-btn,
+.var-tab,
+.icon-btn,
+#play-pause-btn,
+#close-sidebar-btn,
+#sidebar-alg-toggle,
+#sidebar-alg-toggle-table,
+#show-all-btn,
+#show-all-table-btn,
+.alg-dot,
+#alg-title-text,
+.view-tab-btn,
+#sedenion-table td,
+#sedenion-table th,
+.calc-mode-sel,
+.help-container,
+.setting-row,
+#zerodiv-overlay,
+#table-hint,
+.fano-btn,
+#tab-fano,
+#calc-formula-menu {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+/* --- STILI CALCOLATRICE E DOCK MOBILE --- */
+/* Forza icona alg mobile a non illuminarsi MAI */
+#alg-mobile-trigger {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #556677 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Nasconde i tasti dock su Desktop e resetta il layout Carousel */
+@media (min-width: 769px) {
+    .dock-mobile-only {
+        display: none !important;
+    }
+
+    #carousel-track {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        position: static;
+    }
+
+    /* FIX: Forza l'annullamento degli spostamenti laterali del mobile quando si torna su PC */
+    .carousel-panel {
+        transform: none !important;
+        visibility: visible !important;
+        transition: none !important;
+    }
+
+    #carousel-p0 {
+        position: static;
+        height: 0;
+        width: 0;
+        overflow: visible;
+        display: block;
+        padding: 0;
+    }
+
+    #carousel-p1 {
+        position: static;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
+
+    #carousel-p2 {
+        position: static;
+        height: 0;
+        width: 0;
+        overflow: visible;
+        display: block;
+        padding: 0;
+    }
+}
+
+/* Stili e riposizionamento su Mobile */
+@media (max-width: 768px) {
+    #settings-toggle-btn {
+        display: none !important;
+    }
+
+    #settings-mobile-btn {
+        display: block !important;
+    }
+
+    #mobile-swipe-nav {
+        display: flex !important;
+        white-space: nowrap !important;
+    }
+
+    #mobile-swipe-nav span {
+        font-size: 11px !important;
+    }
+
+    #zerodiv-content-grid {
+        padding: 4px 2px !important;
+        /* Riduce i margini per far respirare a sinistra/destra */
+        gap: 3px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    #zerodiv-content-grid>div:first-child {
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+    }
+
+    .zerodiv-grid-btn {
+        font-size: 10px !important;
+        /* Riduce per non tagliare le formule */
+        padding: 4px 0 !important;
+        letter-spacing: -0.3px;
+        /* Recupera spazio utile */
+    }
+
+    /* Nascondi la barra delle tab "Formule / a*b=0" su mobile per risparmiare spazio */
+    .calc-view-tabs {
+        display: none !important;
+    }
+
+    /* Riduciamo il padding per compattare la calcolatrice */
+    .calc-body {
+        padding-top: 4px;
+    }
+
+    /* Riposiziona il menu delle formule in modo che nasca dalla dock su mobile */
+    #calc-formula-menu {
+        position: fixed !important;
+        bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        top: auto !important;
+        z-index: 6000 !important;
+    }
+}
+
+/* --- IMPOSTAZIONI MOBILE (Solo icona top right) --- */
+#settings-mobile-btn {
+    display: none;
+    position: absolute;
+    top: calc(32px + env(safe-area-inset-top));
+    right: 20px;
+    z-index: 50;
+    cursor: pointer;
+    color: #8899aa;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+#settings-mobile-btn.active {
+    color: #00aaff;
+    filter: drop-shadow(0 0 5px rgba(0, 170, 255, 0.5));
+    transform: scale(1.1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    #settings-mobile-btn:hover {
+        color: #00aaff;
+        filter: drop-shadow(0 0 5px rgba(0, 170, 255, 0.5));
+        transform: scale(1.1);
+    }
+}
+
+#settings-mobile-btn .icon-svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* --- MENU IMPOSTAZIONI (Fixed Bottom) --- */
+#settings-menu {
+    position: absolute;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    /* Sopra la dock, adattato alle barre di sistema */
+    left: 50%;
+    /* Perfettamente centrato rispetto allo schermo */
+    transform: translateX(-50%);
+    width: 260px;
+
+    /* NASA Glass Style */
+    background: rgba(12, 14, 18, 0.9);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-bottom: 2px solid #00aaff;
+    /* Accento neon sotto */
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 100, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border-radius: 12px 12px 0 0;
+    /* Arrotondato solo sopra */
+    padding: 15px;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 2000;
+}
+
+#settings-menu::before {
+    /* Decorazione tech nell'angolo */
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: -1px;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid #00aaff;
+    border-left: 2px solid #00aaff;
+}
+
+/* Decorazione tech speculare a destra */
+#settings-menu::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid #00aaff;
+    border-right: 2px solid #00aaff;
+}
+
+#settings-menu.visible {
+    display: flex;
+    animation: slideInUp 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        /* Parte da -50% X e un po' più in basso Y */
+        transform: translateX(-50%) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        /* Finisce a -50% X e 0 Y */
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.menu-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8899aa;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    height: 70px;
+    font-family: 'Segoe UI', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.menu-btn:hover {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: #00aaff;
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);
+}
+
+.menu-btn svg {
+    fill: currentColor;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.menu-btn:active {
+    transform: scale(0.96);
+}
+
+.menu-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.menu-btn span {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.menu-btn.full-width {
+    grid-column: span 2;
+    flex-direction: row;
+    height: 40px;
+    gap: 10px;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #aaa;
+    font-size: 11px;
+    padding-top: 8px;
+    border-top: 1px solid #333;
+    margin-top: 5px;
+    transition: opacity 0.2s;
+}
+
+/* --- STILI DIMMING IMPOSTAZIONI DURANTE DRAG --- */
+#settings-menu.dimmed {
+    background: rgba(12, 14, 18, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border-color: rgba(0, 170, 255, 0.1);
+    box-shadow: none;
+}
+
+#settings-menu.dimmed .menu-grid {
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+#settings-menu.dimmed .setting-row:not(.active-slider) {
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+/* Play/Pause Button Style */
+#play-pause-btn {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: #2a2a30;
+    border: 1px solid #555;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+#play-pause-btn:hover {
+    background: #444;
+    border-color: #0088ff;
+    color: #0088ff;
+    transform: scale(1.05);
+}
+
+#play-pause-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* Slider Customization */
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Aggiunto standard W3C */
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #0088ff;
+    cursor: pointer;
+    margin-top: -5px;
+    box-shadow: 0 0 5px rgba(0, 136, 255, 0.5);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #444;
+    border-radius: 2px;
+}

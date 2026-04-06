@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cayley-Dickson v20.10</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dock.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/calculator.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "./js/three/three.module.js",
+            "three/addons/": "./js/three/addons/"
+        }
+    }
+</script>
+</head>
+
+<body ontouchstart="">
+
+    <div id="help-modal">
+        <div class="help-container">
+            <div class="help-header">
+                <strong>Guida all'uso</strong>
+                <div id="close-help-btn" class="icon-btn" style="font-size:20px;">&times;</div>
+            </div>
+            <div class="help-content">
+
+                <div class="help-page active" data-page="0">
+                    <h3 style="color:#00aaff; margin-top:0;">1. Panoramica</h3>
+                    <p>Progetto ideato da <strong>Fabio Caiazzo</strong>. Visualizzatore interattivo per
+                        <strong>Quaternioni (&#x210D;)</strong>, <strong>Ottetti (&#x1D546;)</strong> e
+                        <strong>Sedenioni (&#x1D54A;)</strong>.
+                    </p>
+                    <ul style="padding-left:20px;">
+                        <li><strong>Grafico 3D:</strong> Rappresenta la struttura moltiplicativa. Clicca sulle sfere o
+                            usa la tabella per isolare le sotto-algebre.</li>
+                        <li><strong>Neon & Colori:</strong> Le luci viaggiano indicando la direzione positiva del
+                            prodotto (es: e1&rarr;e2 &rarr; e3 vuol dire e1*e2=e3).</li>
+                        <li><strong>Tasto &#x1D54A; (Algebra):</strong> Cambia la visualizzazione tra le 3 algebre (la
+                            calcolatrice lavora sempre sui Sedenioni).</li>
+                        <li><strong>Impostazioni (&#9881;):</strong> Sfondi, Griglia, Velocità animazione e Opacità.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="1">
+                    <h3 style="color:#00aaff; margin-top:0;">2. Calcolatrice: Input e Variabili</h3>
+                    <p>La calcolatrice opera sempre su <strong>16 componenti</strong> (Sedenioni), indipendentemente
+                        dalla vista 3D.</p>
+                    <ul style="padding-left:20px;">
+                        <li><strong>Variabili (a, b, c, d):</strong> Memorizza vettori complessi. Usa i tab sopra la
+                            griglia per selezionarle.</li>
+                        <li><strong>Input Griglia:</strong> I valori attivi (in base all'algebra selezionata) sono
+                            bianchi, gli altri grigi, ma tutti modificabili.</li>
+                        <li><strong>Generazione Random:</strong>
+                            <ul>
+                                <li><code>Rand &#x210D;</code>: Genera Quaternione (indici 0-3).</li>
+                                <li><code>Rand &#x1D546;</code>: Genera Ottetto (indici 0-7).</li>
+                                <li><code>Rand &#x1D54A;</code>: Genera Sedenione completo (0-15).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="2">
+                    <h3 style="color:#00aaff; margin-top:0;">3. Calcolatrice: Operazioni Avanzate</h3>
+                    <ul style="padding-left:20px; margin-bottom:10px;">
+                        <li><strong>Sintassi:</strong> <code>inv(a)</code>, <code>norm(a)</code>, <code>[a,b]</code>
+                            (commutatore), <code>[a,b,c]</code> (associatore), <code>e_(n)</code> (unità base).</li>
+                        <li><strong>Passaggi (Tasto Lista):</strong> Clicca l'icona blu a destra di "=" per vedere il
+                            calcolo Step-by-Step dettagliato.</li>
+                        <li><strong>Formule Rapide:</strong> Menu a tendina per un formulario che inserisce esempi
+                            notevoli (es. non-associatività).</li>
+                        <li><strong>Confronto:</strong> Usa <code>==</code> o <code>=?</code> per verificare uguaglianze
+                            (es: <code>[a,b] =? 0</code>).</li>
+                        <li><strong>Assegnazione:</strong> Usa <code>=</code> per assegnare un valore alle variabili
+                            (es: <code>a=5</code>).</li>
+                        <li><strong>Apertura diretta:</strong> Cliccando un qualunque numero o lettera da tastiera, è
+                            possibile aprire direttamente la calcolatrice.</li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="3">
+                    <h3 style="color:#00aaff; margin-top:0;">4. Divisori dello Zero</h3>
+                    <p>Clicca il tasto rosso <code>a&middot;b=0</code> nella calcolatrice.</p>
+                    <ul style="padding-left:20px;">
+                        <li><strong>Visualizzazione 3D:</strong> Cliccando una coppia divisore, il grafico si aggiorna
+                            per mostrare il <strong>Piano di Fano</strong> o il <strong>Fulcro</strong> coinvolto.</li>
+                        <li><strong>Codice Colori 3D:</strong>
+                            <ul>
+                                <li><span style="color:#0088ff">Blu</span>: Ciclo nell'algebra degli ottetti.</li>
+                                <li><span style="color:#ffdd00">Giallo</span>: Nodo "Fulcro" comune (indice > 7).</li>
+                                <li><span style="color:#00ff00">Verde</span> / <span style="color:#ff0000">Rosso</span>:
+                                    Indica il verso di percorrenza dal nodo blu verso il fulcro.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Auto-Calcolo:</strong> Cliccando una coppia, le variabili A e B vengono impostate
+                            automaticamente per dimostrare il prodotto nullo.</li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="4">
+                    <h3 style="color:#00aaff; margin-top:0;">5. Tabelle e Piani di Fano</h3>
+                    <p>Pannello laterale (apri con <span class="help-icon-inline">▦</span>), oppure trascina la
+                        linguetta blu:</p>
+                    <ul style="padding-left:20px;">
+                        <li><strong>Terne:</strong> Clicca per isolare una singola terna nel grafico 3D.</li>
+                        <li><strong>Piani di Fano:</strong> Sotto al grafico terne, trovi i 15 piani di Fano. Cliccali
+                            per evidenziare le 7 terne che formano una sotto-algebra chiusa.</li>
+                        <li><strong>Tabella Moltiplicativa:</strong>
+                            <ul>
+                                <li>Clic Intestazioni: Isola tutte le terne connesse a quell'unità.</li>
+                                <li>Clic Cella interna: Isola la terna specifica 3D relativa al prodotto.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="help-footer">
+                <button id="help-prev-btn" class="help-nav-btn" disabled>&lt; Indietro</button>
+                <div class="help-indicators">
+                    <div class="help-dot active"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                </div>
+                <button id="help-next-btn" class="help-nav-btn">Avanti &gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-modal">
+        <div id="history-overlay">
+            <div class="history-header">
+                <strong>Cronologia Risultati</strong>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <span id="btn-clear-log"
+                        style="cursor:pointer; color:#ff5555; display:inline-flex; align-items:center; font-size:12px;">
+                        <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor; margin-right:4px;">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg> Pulisci
+                    </span>
+                    <span id="btn-close-history" style="cursor:pointer; color:#ccc; font-size:24px; line-height:1;"
+                        title="Chiudi">&times;</span>
+                </div>
+            </div>
+            <div id="calc-log">
+                <div style="text-align:center; color:#555; margin-top:20px; font-size:12px;">Nessun calcolo recente
+                </div>
+            </div>
+        </div>
+
+        <div id="steps-overlay"
+            style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(20, 20, 25, 0.98); z-index:2600; flex-direction:column; backdrop-filter:blur(10px); border-radius:8px;">
+            <div
+                style="padding:10px; border-bottom:1px solid #444; background:#25252a; display:flex; justify-content:space-between; align-items:center; color:white;">
+                <strong>Passaggi Calcolo</strong>
+                <span id="close-steps-btn" style="cursor:pointer; font-size:20px;">&times;</span>
+            </div>
+            <div id="steps-content"
+                style="flex:1; overflow-y:auto; padding:15px; font-family:'Segoe UI', monospace; color:#ddd; font-size:13px;">
+            </div>
+        </div>
+
+        <div id="kernel-overlay"
+            style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(10, 25, 15, 0.98); z-index:2650; flex-direction:column; backdrop-filter:blur(10px); border-radius:8px;">
+            <div
+                style="padding:10px; border-bottom:1px solid #005522; background:#0a1a0f; display:flex; justify-content:space-between; align-items:center; color:#00ffaa; font-weight:bold;">
+                <span>Spazio Nullo (Kernel)</span>
+                <span id="close-kernel-ui" style="cursor:pointer; font-size:20px;">&times;</span>
+            </div>
+            <div style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column;">
+                <div id="kernel-formula-display"
+                    style="font-size:14px; color:#ccffcc; font-family:'Times New Roman', serif; font-style:italic; word-break: break-all; line-height: 1.4; margin-bottom: 15px;">
+                    v = q<sub>1</sub>t<sub>1</sub> + ...
+                </div>
+                <div id="kernel-inputs-container"
+                    style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom: 20px;">
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:12px; border-radius:6px; border:1px solid #005522;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <div style="color:#88aa88; font-size:11px; text-transform:uppercase;">Vettore Generato</div>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:#00aaff;" title="Salva in">
+                                <path
+                                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                            </svg>
+                            <button onclick="saveKernelToVar('a')"
+                                style="background:#0a1a0f; color:#00ffaa; border:1px solid #005522; border-radius:3px; font-size:11px; cursor:pointer; padding:2px 6px; transition:0.2s;"
+                                onmouseover="this.style.background='#005522'"
+                                onmouseout="this.style.background='#0a1a0f'">a</button>
+                            <button onclick="saveKernelToVar('b')"
+                                style="background:#0a1a0f; color:#00ffaa; border:1px solid #005522; border-radius:3px; font-size:11px; cursor:pointer; padding:2px 6px; transition:0.2s;"
+                                onmouseover="this.style.background='#005522'"
+                                onmouseout="this.style.background='#0a1a0f'">b</button>
+                            <button onclick="saveKernelToVar('c')"
+                                style="background:#0a1a0f; color:#00ffaa; border:1px solid #005522; border-radius:3px; font-size:11px; cursor:pointer; padding:2px 6px; transition:0.2s;"
+                                onmouseover="this.style.background='#005522'"
+                                onmouseout="this.style.background='#0a1a0f'">c</button>
+                            <button onclick="saveKernelToVar('d')"
+                                style="background:#0a1a0f; color:#00ffaa; border:1px solid #005522; border-radius:3px; font-size:11px; cursor:pointer; padding:2px 6px; transition:0.2s;"
+                                onmouseover="this.style.background='#005522'"
+                                onmouseout="this.style.background='#0a1a0f'">d</button>
+                            <span id="kernel-save-confirm"
+                                style="color:#00ffaa; font-size:10px; display:none; margin-left:5px;">Salvato!</span>
+                        </div>
+                    </div>
+                    <div id="kernel-result-display"
+                        style="color:#00ffaa; font-family:'Consolas', monospace; font-size:15px; word-break: break-all;">
+                        0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="calc-helper-overlay"
+            style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(20,25,30,0.98); z-index:2100; flex-direction:column; backdrop-filter:blur(10px); border-radius:8px;">
+            <div
+                style="padding:10px; border-bottom:1px solid #334455; background:#1a1f25; color:#aaaaff; font-weight:bold; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                <span>Guida Calcolatrice</span>
+                <span id="close-calc-helper"
+                    style="cursor:pointer; font-size:20px; line-height:1; color:#66aaff;">&times;</span>
+            </div>
+
+            <div style="position:relative; flex:1; overflow:hidden; display:flex; flex-direction:column;">
+                <div id="calc-helper-panel"
+                    style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(15,20,25,0.95); padding:20px; overflow-y:auto; z-index:20; backdrop-filter:blur(5px); color:#ddd; font-size:13px; line-height:1.6; font-family:'Segoe UI', sans-serif; display:flex; flex-direction:column; box-sizing:border-box;">
+
+                    <div id="ch-page-1" style="flex:1;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            1. Variabili e Input</h3>
+                        <p><b>Variabili (a, b, c, d):</b> Memorizzano vettori a 16 componenti (Sedenioni). Selezionabili
+                            via tab sopra la griglia.</p>
+                        <p><b>Griglia Input:</b> I valori dell'algebra attiva sono bianchi, gli altri grigi, ma tutti
+                            modificabili.</p>
+                        <p><b>Numeri Casuali:</b></p>
+                        <ul style="padding-left:20px; margin:5px 0;">
+                            <li><code>Rand ℍ</code>: Genera Quaternione (indici 0-3)</li>
+                            <li><code>Rand 𝕆</code>: Genera Ottetto (indici 0-7)</li>
+                            <li><code>Rand 𝕊</code>: Genera Sedenione completo (0-15)</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-2" style="flex:1; display:none;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            2. Tasti Numerici e Operatori Base</h3>
+                        <p><b>Numeri:</b> <code>0-9</code> per inserire cifre numeriche.</p>
+                        <p><b>Virgola:</b> <code>.</code> (punto) per decimali. Con <b>Shift:</b> <code>,</code>
+                            (virgola)</p>
+                        <p><b>Operatori Base:</b></p>
+                        <ul style="padding-left:20px; margin:5px 0;">
+                            <li><code>+</code> Addizione (Shift: norm Norma)</li>
+                            <li><code>-</code> Sottrazione (Shift: <code>cnj</code> Coniugato)</li>
+                            <li><code>×</code> Moltiplicazione (Shift: <code>^</code> Potenza)</li>
+                            <li><code>÷</code> Divisione (Shift: <code>inv</code> Inverso)</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-3" style="flex:1; display:none;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            3. Funzioni Avanzate</h3>
+                        <p><b>Parentesi:</b> <code>( )</code> raggruppa operazioni (Shift: <code>[x,y]</code>
+                            Commutatore)</p>
+                        <p><b>Base Unità:</b> <code>e_n</code> unità base sedenioni (Shift: <code>Ker()</code> Kernel)
+                        </p>
+                        <p><b>Funzioni Notevoli:</b></p>
+                        <ul style="padding-left:20px; margin:5px 0;">
+                            <li><code>norm(x)</code>: Norma (radice della somma dei quadrati)</li>
+                            <li><code>[x,y]</code>: Commutatore xy - yx</li>
+                            <li><code>[x,y,z]</code>: Associatore (xy)z - x(yz)</li>
+                            <li><code>e_(n)</code>: Unità base dell'algebra</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-4" style="flex:1; display:none;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            4. Comandi e Confronti</h3>
+                        <p><b>Assegnazione:</b> <code>a=5</code> assegna un valore alla variabile</p>
+                        <p><b>Confronti:</b></p>
+                        <ul style="padding-left:20px; margin:5px 0;">
+                            <li><code>==</code>: Verifica uguaglianza esatta</li>
+                            <li><code>=?</code>: Verifica uguaglianza con tolleranza numerica</li>
+                        </ul>
+                        <p><b>Esempio:</b> <code>[a,b] =? 0</code> verifica se a e b commutano</p>
+                        <p><b>Passaggi:</b> Clicca il bottone blu accanto a "=" per visualizzare il calcolo
+                            step-by-step.</p>
+                    </div>
+
+                    <div id="ch-page-5" style="flex:1; display:none;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            5. Cronologia e Variabili</h3>
+                        <p><b>Cronologia:</b> Clicca l'icona in alto a sinistra nel display della calcolatrice per
+                            vedere lo storico dei calcoli.</p>
+                        <p><b>Tasti Variabili:</b></p>
+                        <ul style="padding-left:20px; margin:5px 0;">
+                            <li><code>Azzera</code> (Rosso): Azzera il valore dellavariabile corrente.</li>
+                            <li><code>Rand</code>: Genera quaternione (&#x210D;), ottetti (&#x1D546;) o 
+                                sedenioni(&#x1D54A;) random.</li>
+                        </ul>
+                        <p><b>Stato Variabili:</b> Apparirà un <b>pallino verde</b> sui tasti 'a', 'b',
+                            'c' o 'd' del tastierino numerico per indicare visivamente quali variabili contengono un
+                            valore non nullo memorizzato.</p>
+                    </div>
+
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid #334455; flex-shrink:0;">
+                        <button id="ch-prev-btn"
+                            style="background:#2a3a4a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; visibility:hidden;"
+                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(-1)">&lt;
+                            Indietro</button>
+                        <div id="ch-page-indicator" style="color:#888; font-size:12px;">1 / 5</div>
+                        <button id="ch-next-btn"
+                            style="background:#3a4a5a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;"
+                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(1)">Avanti
+                            &gt;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="zerodiv-overlay">
+            <div
+                style="padding: 10px; border-bottom: 1px solid #334455; background: #1a1f25; color:#aaaaff; font-weight:bold; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                <span>Divisori dello zero</span>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <label id="zerodiv-explain-label" title="Spiegazione" style="cursor:pointer; display:flex; align-items:center; justify-content:center; 
+                               width:20px; height:20px; 
+                               border:1px solid #667788; border-radius:50%; 
+                               color:#667788; font-size:12px; font-weight:bold; font-family:'Segoe UI', sans-serif;
+                               transition:all 0.2s; user-select:none;">
+                        <input type="checkbox" id="zerodiv-explain-check" style="display:none;">
+                        ?
+                    </label>
+
+                    <span id="close-zerodiv-overlay"
+                        style="cursor:pointer; font-size:20px; line-height:1; color:#66aaff;">&times;</span>
+                </div>
+            </div>
+
+            <div style="position:relative; flex:1; overflow:hidden; display:flex; flex-direction:column;">
+                <div id="zerodiv-explanation-panel"
+                    style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(20, 25, 30, 0.98); padding:20px; overflow-y:auto; z-index:20; backdrop-filter:blur(10px); color:#eee; font-size:14px; line-height:1.6; font-family:'Segoe UI', sans-serif; flex-direction:column;">
+
+                    <div id="zd-page-1" style="flex:1;">
+                        <h3
+                            style="color:#aaaaff; margin-top:0; border-bottom:1px solid #334455; padding-bottom:10px; flex-shrink:0;">
+                            Rappresentazione grafica dei divisori dello zero</h3>
+                        <p>In tabella sono elencati gli 84 divisori dello zero dei sedenioni, ossia:</p>
+                        <div
+                            style="text-align:center; font-family:'Times New Roman', serif; font-size:20px; margin:20px 0; color:#aaaaff;">
+                            (e<sub>a</sub> + e<sub>b</sub>)(e<sub>c</sub> + e<sub>d</sub>) = 0
+                        </div>
+                        <p>In cui gli indici <b>a</b> e <b>c</b> sono minori di 8, mentre gli indici <b>b</b> e <b>d</b>
+                            sono maggiori di 8.</p>
+                    </div>
+
+                    <div id="zd-page-2" style="flex:1; display:none;">
+                        <p>Cliccando su uno di essi:</p>
+                        <ol style="padding-left:20px; margin-bottom:20px; color:#ddd;">
+                            <li style="margin-bottom:5px;">Verranno memorizzate nelle variabili <b>a</b> e <b>b</b>
+                                della
+                                calcolatrice i fattori selezionati.</li>
+                            <li>Nel grafico verrà visualizzato il piano di Fano corrispondente alla sotto-algebra
+                                in cui vivono e<sub>a</sub>, e<sub>b</sub>, e<sub>c</sub> ed e<sub>d</sub>.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div id="zd-page-3" style="flex:1; display:none;">
+                        <ul style="list-style:none; padding:0; margin:0;">
+                            <li style="margin-bottom:10px;">
+                                <span><b style="color:#00aaff;">Blu:</b> Terna dell'algebra degli ottetti &#x1D546; (a cui
+                                    appartengono e<sub>a</sub> ed e<sub>c</sub>).</span>
+                            </li>
+                            <li style="margin-bottom:10px;">
+                                <span><b style="color:#ffdd00;">Giallo:</b> Nodo fulcro e<sub>k</sub> (comune ai cicli {e<sub>a</sub>,
+                                    e<sub>b</sub>, e<sub>k</sub>} e {e<sub>c</sub>, e<sub>d</sub>,
+                                    e<sub>k</sub>}).</span>
+                            </li>
+                            <li style="margin-bottom:10px;">
+                                <span><b style="color:#00ff00;">Verde:</b> Se il percorso dal nodo blu al fulcro giallo è in senso
+                                    <b>concorde</b>.</span>
+                            </li>
+                            <li>
+                                <span><b style="color:#ff5555;">Rosso:</b> Se il percorso dal nodo blu al fulcro giallo è in senso <b>non
+                                        concorde</b>.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="zd-page-4" style="flex:1; display:none;">
+                        <p style="font-style:italic; color:#aaa; font-size:13px; text-align:center;">
+                            Se i due cicli sono di colori diversi, nel prodotto ci saranno solo più.<br>
+                            Se i due cicli sono dello stesso colore, nel prodotto si mette meno in uno dei due fattori.
+                        </p>
+                        <div
+                            style="text-align: center; font-style: italic; color: #aaaaff; font-size: 13px; margin-top: 15px;">
+                            Se vale (e<sub>a</sub>+e<sub>b</sub>)(e<sub>c</sub>+e<sub>d</sub>)=0, allora anche<br>
+                            (e<sub>a</sub>-e<sub>b</sub>)(e<sub>c</sub>-e<sub>d</sub>)=0<br><br>
+                            Se vale (e<sub>a</sub>+e<sub>b</sub>)(e<sub>c</sub>-e<sub>d</sub>)=0, allora anche<br>
+                            (e<sub>a</sub>-e<sub>b</sub>)(e<sub>c</sub>+e<sub>d</sub>)=0
+                        </div>
+                    </div>
+
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid #334455; flex-shrink:0;">
+                        <button id="zd-prev-btn"
+                            style="background:#2a3a4a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; visibility:hidden;"
+                            onclick="if(window.changeZdPage) window.changeZdPage(-1)">&lt; Indietro</button>
+                        <div id="zd-page-indicator" style="color:#aaa; font-size:12px;">1 / 4</div>
+                        <button id="zd-next-btn"
+                            style="background:#3a4a5a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;"
+                            onclick="if(window.changeZdPage) window.changeZdPage(1)">Avanti &gt;</button>
+                    </div>
+                </div>
+
+                <div id="zerodiv-content-grid"></div>
+            </div>
+        </div>
+
+        <div class="calc-body">
+            <div class="display-area">
+                <div id="toggle-history-btn" class="icon-btn" title="Cronologia" style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+                    </svg>
+                </div>
+
+                <div id="popout-calc-btn" class="icon-btn" title="Apri in nuova finestra"
+                    style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                    </svg>
+                </div>
+
+                <div id="mobile-vars-btn" class="icon-btn" title="Definisci Variabili" onclick="toggleVarsView();"
+                    style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
+                    </svg>
+                </div>
+
+                <div class="input-wrapper" style="padding-left: 30px; box-sizing: border-box;">
+                    <div id="highlight-layer"></div>
+                    <input type="text" id="expression-display" placeholder="Espressione..." autocomplete="off"
+                        spellcheck="false" autocorrect="off" autocapitalize="off" inputmode="none">
+                </div>
+                <div id="result-display">0</div>
+            </div>
+
+            <div id="mobile-swipe-nav"
+                style="display:flex; white-space:nowrap; justify-content:space-between; align-items:center; padding:4px 10px 0 10px; font-size:12px; color:#00aaff; font-family:'Segoe UI', sans-serif; letter-spacing:0.5px; user-select:none; font-weight:bold;">
+                <span id="swipe-nav-left" style="cursor:pointer; padding:5px 10px;"
+                    onclick="if(window.applySwipeState) window.applySwipeState((window.currentSwipeState + 2) % 3);">&laquo;
+                    Formule</span>
+
+                <label id="formula-explain-label-mobile" title="Spiegazione Formule"
+                    style="display:none; cursor:pointer; align-items:center; justify-content:center; width:20px; height:20px; border:1px solid #667788; border-radius:50%; color:#667788; font-size:12px; font-weight:bold; transition:all 0.2s; user-select:none; margin:0 5px;">
+                    <input type="checkbox" id="formula-explain-check-mobile" style="display:none;"
+                        onchange="if(window.toggleFormulaExplain) window.toggleFormulaExplain(this.checked);">
+                    ?
+                </label>
+
+                <label id="calc-helper-label-mobile" title="Guida Calcolatrice"
+                    style="display:flex; cursor:pointer; align-items:center; justify-content:center; width:20px; height:20px; border:1px solid #667788; border-radius:50%; color:#667788; font-size:12px; font-weight:bold; transition:all 0.2s; user-select:none; margin:0 5px;">
+                    <input type="checkbox" id="calc-helper-check-mobile" style="display:none;"
+                        onchange="if(document.getElementById('calc-helper-overlay')) { const el = document.getElementById('calc-helper-overlay'); const isChecked = this.checked; el.style.display = isChecked ? 'flex' : 'none'; if(isChecked) { window.currentCalcHelperPage = 1; if(window.changeCalcHelperPage) window.changeCalcHelperPage(0); }}">
+                    ?
+                </label>
+
+                <label id="zerodiv-explain-label-mobile" title="Spiegazione"
+                    style="display:none; cursor:pointer; align-items:center; justify-content:center; width:20px; height:20px; border:1px solid #667788; border-radius:50%; color:#667788; font-size:12px; font-weight:bold; transition:all 0.2s; user-select:none; margin:0 5px;">
+                    <input type="checkbox" id="zerodiv-explain-check-mobile" style="display:none;">
+                    ?
+                </label>
+
+                <span id="swipe-nav-right" style="cursor:pointer; padding:5px 10px;"
+                    onclick="if(window.applySwipeState) window.applySwipeState((window.currentSwipeState + 1) % 3);">Divisori
+                    dello zero &raquo;</span>
+            </div>
+
+            <div class="calc-view-tabs"
+                style="display:none !important; position:relative; z-index:2500; border-bottom: none;">
+                <button id="calc-formulas-btn" class="view-tab-btn active" style="border-radius:4px;">Formule
+                    &#9652;</button>
+                <button id="calc-zerodiv-btn" class="view-tab-btn"
+                    style="display:none; color:#ffcccc; border-bottom-color:#ff5555; border-radius:4px;">a&middot;b=0</button>
+            </div>
+            <div id="calc-formula-menu"></div>
+
+            <div id="view-keypad" class="calc-view active">
+                <div class="keypad" id="main-keypad"
+                    style="flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                    <button class="key-btn key-var" onpointerdown="startVarPress(event, 'a')"
+                        onpointerup="endVarPress(event, 'a')" onpointerleave="cancelVarPress(event)"
+                        oncontextmenu="event.preventDefault();">a</button>
+                    <button class="key-btn key-var" onpointerdown="startVarPress(event, 'b')"
+                        onpointerup="endVarPress(event, 'b')" onpointerleave="cancelVarPress(event)"
+                        oncontextmenu="event.preventDefault();">b</button>
+                    <button class="key-btn key-var" onpointerdown="startVarPress(event, 'c')"
+                        onpointerup="endVarPress(event, 'c')" onpointerleave="cancelVarPress(event)"
+                        oncontextmenu="event.preventDefault();">c</button>
+                    <button class="key-btn key-var" onpointerdown="startVarPress(event, 'd')"
+                        onpointerup="endVarPress(event, 'd')" onpointerleave="cancelVarPress(event)"
+                        oncontextmenu="event.preventDefault();">d</button>
+
+                    <button class="key-btn key-del has-shift" onpointerdown="startCancPress(event)"
+                        onpointerup="endCancPress(event)" onpointerleave="cancelCancPress(event)"
+                        oncontextmenu="event.preventDefault();">
+
+                        <span class="key-primary">⌫</span><span class="key-secondary">AC</span>
+                    </button>
+                    <button class="key-btn key-2nd" id="btn-shift" onclick="toggleShift()">Shift</button>
+                    <button class="key-btn has-shift" onclick="handleKey('()')">
+                        <span class="key-primary">( )</span><span class="key-secondary">[x,y]</span>
+                    </button>
+                    <button class="key-btn key-var has-shift" onclick="handleKey('e_n')" title="Inserisci base">
+                        <span class="key-primary">e<sub>n</sub></span><span class="key-secondary">Ker()</span>
+                    </button>
+
+                    <button class="key-btn key-num" onclick="handleKey('7')">7</button>
+                    <button class="key-btn key-num" onclick="handleKey('8')">8</button>
+                    <button class="key-btn key-num" onclick="handleKey('9')">9</button>
+                    <button class="key-btn key-op has-shift" onclick="handleKey('/')">
+                        <span class="key-primary">&divide;</span><span class="key-secondary"
+                            style="color:#00aaff;">inv</span>
+                    </button>
+
+                    <button class="key-btn key-num" onclick="handleKey('4')">4</button>
+                    <button class="key-btn key-num" onclick="handleKey('5')">5</button>
+                    <button class="key-btn key-num" onclick="handleKey('6')">6</button>
+                    <button class="key-btn key-op has-shift" onclick="handleKey('*')">
+                        <span class="key-primary">&times;</span><span class="key-secondary"
+                            style="color:#00aaff;">^</span>
+                    </button>
+
+                    <button class="key-btn key-num" onclick="handleKey('1')">1</button>
+                    <button class="key-btn key-num" onclick="handleKey('2')">2</button>
+                    <button class="key-btn key-num" onclick="handleKey('3')">3</button>
+                    <button class="key-btn key-op has-shift" onclick="handleKey('-')">
+                        <span class="key-primary">-</span><span class="key-secondary" style="color:#00aaff;">cnj</span>
+                    </button>
+
+                    <button class="key-btn key-num has-shift" onclick="handleKey('.')">
+                        <span class="key-primary">.</span><span class="key-secondary">,</span>
+                    </button>
+                    <button class="key-btn key-num" onclick="handleKey('0')">0</button>
+                    <div style="position:relative; display:flex; height:100%;">
+                        <div id="eval-popup"
+                            style="display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:rgba(20,25,30,0.95); border:1px solid #00ffaa; border-radius:6px; flex-direction:column; padding:4px; gap:4px; z-index:3000; box-shadow:0 10px 20px rgba(0,0,0,0.8); backdrop-filter:blur(10px);">
+                            <button class="key-btn key-eval" style="height:36px; padding:0 15px; font-size:14px;"
+                                onclick="handleKey('assign'); hideEvalPopup();">Scrivi =</button>
+                            <button class="key-btn key-eval" style="height:36px; padding:0 15px;"
+                                onclick="handleKey('=?'); hideEvalPopup();">=?</button>
+                            <button class="key-btn key-eval" style="height:36px; padding:0 15px;"
+                                onclick="handleKey('='); hideEvalPopup();">Calcola</button>
+                        </div>
+                        <button class="key-btn key-eval has-shift" style="width:100%;"
+                            onpointerdown="startEvalPress(event)" onpointerup="endEvalPress(event)"
+                            onpointerleave="cancelEvalPress(event)" oncontextmenu="event.preventDefault();">
+                            <span class="key-primary">=</span>
+                            <span class="key-secondary flex-center">
+                                <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:white;">
+                                    <path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm4-5h12v2H8zm0 5h12v2H8zm0-10h12v2H8z" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <button class="key-btn key-op has-shift" onclick="handleKey('+')">
+                        <span class="key-primary">+</span><span class="key-secondary" style="color:#00aaff;">norm</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-vars" class="calc-view">
+
+                <div class="var-tabs" style="margin-top: 10px;">
+                    <div class="var-tab active" data-var="a">Var A</div>
+                    <div class="var-tab" data-var="b">Var B</div>
+                    <div class="var-tab" data-var="c">Var C</div>
+                    <div class="var-tab" data-var="d">Var D</div>
+                </div>
+
+                <div style="margin-bottom: 5px;">
+
+                    <div id="input-grid" class="vector-inputs" style="margin-bottom: 4px;"></div>
+                    <div
+                        style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px; margin-bottom:8px; flex-shrink:0;">
+                        <button class="calc-action-btn" id="btn-grid-clear"
+                            style="background: rgba(255, 50, 50, 0.15); border: 1px solid rgba(255, 50, 50, 0.3); color: #ff5555;">Azzera</button>
+                        <button class="calc-action-btn" id="btn-rand-h" title="Random Quaternione"
+                            style="font-family:'Times New Roman';">Rand &#x210D;</button>
+                        <button class="calc-action-btn" id="btn-rand-o" title="Random Ottetto"
+                            style="font-family:'Times New Roman';">Rand &#x1D546;</button>
+                        <button class="calc-action-btn" id="btn-rand-s" title="Random Sedenione"
+                            style="font-family:'Times New Roman';">Rand &#x1D54A;</button>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:5px; margin-bottom:0; flex-shrink:0;">
+                    <button id="back-to-keypad-btn" class="calc-action-btn" onclick="switchCalcView('keypad')"
+                        style="background:#0066cc; color:white; border-color:#0088ff; padding:8px; font-size:12px;">&larr;
+                        Torna alla tastiera</button>
+                    <button id="calc-kernel-btn" class="calc-mode-sel" style="display:none !important;"
+                        title="Calcola l'intero spazio annullatore di A">
+                        b &isin; Ker(a)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <div id="canvas-container">
+            <div id="top-bar">
+                <div id="algebra-switch">
+                    <div class="alg-dots-wrapper">
+                        <div id="alg-mobile-trigger" class="alg-dot" style="display: none;">𝕊</div>
+
+                        <div class="alg-dots" id="alg-dots-list">
+                            <div class="alg-dot" data-target="3" title="Quaternioni">ℍ</div>
+                            <div class="alg-dot" data-target="7" title="Ottetti">𝕆</div>
+                            <div class="alg-dot active" data-target="15" title="Sedenioni">𝕊</div>
+                        </div>
+                    </div>
+                    <div id="alg-title-text">SEDENIONI (&#x1D54A;)</div>
+                </div>
+            </div>
+
+            <div id="settings-mobile-btn" title="Impostazioni Vista">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                    <path
+                        d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07-.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                </svg>
+            </div>
+
+            <div id="app-dock">
+                <div id="calc-toggle-btn" class="ui-btn" data-tooltip="Calcolatrice vettoriale">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z M7 7h10v2H7V7zm0 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+                    </svg>
+                </div>
+
+                <div class="dock-group">
+                    <div id="closure-generator-btn" class="ui-btn" data-tooltip="Chiudi sottoalgebra"
+                        style="display: none; position: relative;">
+                        <span id="closure-badge"
+                            style="position: absolute; top: -5px; right: -5px; background: #00ffaa; color: #000; border-radius: 50%; width: 16px; height: 16px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 5px rgba(0,255,170,0.8); pointer-events: none; z-index: 10;">0</span>
+                        <span
+                            style="font-family: 'Times New Roman', serif; font-size: 22px; font-weight: bold; text-decoration: overline; text-decoration-thickness: 1px; line-height: 1; margin-top: 2px;">K</span>
+                    </div>
+
+                    <div class="dock-divider" id="closure-divider" style="display: none;"></div>
+
+                    <div id="settings-toggle-btn" class="ui-btn" data-tooltip="Impostazioni vista">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                        </svg>
+                    </div>
+
+                    <div id="settings-menu">
+                        <div class="menu-grid">
+                            <button id="home-btn" class="menu-btn" title="Reset Camera">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                                </svg>
+                                <span>Reset Vista</span>
+                            </button>
+
+                            <button id="grid-toggle-btn" class="menu-btn" title="Mostra/Nascondi Griglia">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z" />
+                                </svg>
+                                <span id="grid-label">Griglia: OFF</span>
+                            </button>
+
+                            <button id="help-btn-trigger" class="menu-btn" title="Apri Guida">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" />
+                                </svg>
+                                <span>Guida</span>
+                            </button>
+
+                            <button id="toggle-32-btn" class="menu-btn" onclick="toggle32Ions()"
+                                title="Trigintaduenioni">
+                                <span
+                                    style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 22px; line-height: 1;">&#x1D54B;</span>
+                                <span>32-ioni (beta)</span>
+                            </button>
+
+                            <button id="theme-btn" class="menu-btn full-width" title="Cambia Sfondo">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                                </svg>
+                                <span id="theme-label">Sfondo</span>
+                            </button>
+                        </div>
+
+                        <div class="setting-row">
+                            <button id="play-pause-btn" title="Play/Pausa">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                                </svg>
+                            </button>
+                            <div style="display:flex; flex-direction:column; flex:1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                                    <span style="font-weight:600; font-size:10px; letter-spacing:0.5px;">VELOCITÀ</span>
+                                    <span id="speed-val" style="font-size:10px; color:#0088ff;">0.3x</span>
+                                </div>
+                                <input type="range" id="speed-slider" min="0" max="2" step="0.1" value="0.3">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:24px; display:flex; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;">
+                                    <path
+                                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                </svg>
+                            </div>
+                            <div style="display:flex; flex-direction:column; flex:1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                                    <span style="font-weight:600; font-size:10px; letter-spacing:0.5px;">OPACITÀ</span>
+                                    <span id="opacity-val" style="font-size:10px; color:#0088ff;">0.4</span>
+                                </div>
+                                <input type="range" id="opacity-slider" min="0.1" max="1" step="0.01" value="0.4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dock-show-all-btn" class="ui-btn" data-tooltip="Mostra tutto" style="display:none;">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="sidebar-toggle-btn" class="ui-btn" data-tooltip="Database">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/data.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script src="js/algebra.js"></script>
+
+    <div id="sidebar">
+        <div id="sidebar-resizer"></div>
+        <div class="sidebar-tabs">
+            <button class="tab-btn active" data-tab="triplets" id="tab-btn-triplets">Terne</button>
+            <button class="tab-btn" data-tab="fano" id="tab-btn-fano" style="display:none;">Piani Fano</button>
+            <button class="tab-btn" data-tab="pg32" id="tab-btn-pg32" style="display:none;">PG(3,2)</button>
+            <button class="tab-btn" data-tab="table" id="tab-btn-table">Tabella</button>
+            <button id="close-sidebar-btn" style="display:none;">&times;</button>
+        </div>
+
+        <div id="tab-triplets" class="tab-content active">
+            <div id="triplets-scroll">
+                <div class="triplets-grid" id="buttons-container"></div>
+            </div>
+        </div>
+
+        <div id="tab-fano" class="tab-content">
+            <div
+                style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); text-align:center; color:#667788; font-size:11px; font-style:italic;">
+                In blu gli ottetti, in verde gli ottetti di divisione, in rosso gli ottetti spezzati
+            </div>
+            <div style="flex:1; overflow-y:auto; padding:10px;">
+                <div class="triplets-grid" id="fano-grid"></div>
+            </div>
+        </div>
+
+        <div id="tab-pg32" class="tab-content">
+            <div style="flex:1; overflow-y:auto; padding:10px;">
+                <div class="triplets-grid" id="pg32-grid"></div>
+            </div>
+        </div>
+
+        <div id="tab-table" class="tab-content">
+            <div id="table-scroll">
+                <table id="sedenion-table"></table>
+            </div>
+            <div id="table-hint">Convenzione: Colonna (Sx) &times; Riga (Alto).</div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,438 @@
+/* --- SIDEBAR WORKSPACE (Glassmorphism Full Height) --- */
+#sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    /* A tutta altezza ora */
+    right: 0;
+    width: 0;
+
+    /* Glass Effect (Match Dock) */
+    background: rgba(20, 25, 30, 0.3);
+    /* Più trasparente */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    flex-direction: column;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    z-index: 800;
+    /* Dietro la dock se si sovrappongono */
+}
+
+#sidebar::before {
+    /* Linea neon verticale decorativa */
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, #00aaff, transparent);
+    opacity: 0.5;
+}
+
+#sidebar.open {
+    width: 420px;
+}
+
+/* Larghezza ottimizzata */
+
+/* --- RESIZER (Spostato a Sinistra del pannello) --- */
+#sidebar-resizer {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    /* Bordo sinistro del pannello */
+    width: 12px;
+    height: 80px;
+    cursor: ew-resize;
+    z-index: 850;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sidebar-resizer:hover::after {
+    background: #00aaff;
+    box-shadow: 0 0 10px #00aaff;
+}
+
+/* La linea verticale blu (sottile e discreta) */
+#sidebar-resizer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background-color: #0088ff;
+    transform: translateX(-50%);
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+/* La maniglia centrale (pillola piccola senza frecce) */
+#sidebar-resizer::after {
+    content: '';
+    width: 6px;
+    height: 24px;
+    background: #0088ff;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    z-index: 151;
+}
+
+#sidebar-resizer:hover::before,
+#sidebar-resizer.active::before {
+    opacity: 1;
+}
+
+#sidebar-resizer:hover::after,
+#sidebar-resizer.active::after {
+    height: 32px;
+    background: #33aaff;
+    transform: translateX(-50%) scale(1.1);
+}
+
+@media (max-width: 1024px) {
+    #sidebar-resizer {
+        display: none !important;
+    }
+
+    #sidebar.open {
+        width: 100vw;
+        position: fixed;
+        height: 100dvh;
+        top: 0;
+        right: 0;
+        z-index: 1500;
+    }
+
+    #mobile-bottom-controls {
+        position: fixed;
+        bottom: 25px;
+        right: 20px;
+        top: auto;
+        z-index: 60;
+    }
+
+    /* --- FIX CALCOLATRICE MOBILE --- */
+    @media (max-width: 768px) {
+        #app-dock {
+            bottom: env(safe-area-inset-bottom);
+        }
+
+        #settings-menu {
+            bottom: calc(72px + env(safe-area-inset-bottom));
+            /* Alta 70px + 2px di spazio */
+        }
+
+        #calc-modal {
+            /* --- ASSE VERTICALE (Mobile/Draggable) --- */
+            /* Non usiamo !important su top per permettere il trascinamento JS */
+            top: calc(130px + env(safe-area-inset-top));
+            /* Abbassato per non coprire H/O/S */
+            bottom: auto !important;
+            /* Sganciamo il fondo */
+            /* Fissiamo l'altezza in modo che non copra mai dock e top bar */
+            height: calc(100dvh - 230px) !important;
+            /* Ricalibrato in base al nuovo top */
+
+            /* --- ASSE ORIZZONTALE (Fisso/Centrato) --- */
+            /* Usiamo !important per forzare la centratura e impedire al JS di spostarla lateralmente */
+            left: 10px !important;
+            right: 10px !important;
+            width: auto !important;
+            /* Sovrascrive i 360px fissi del desktop */
+            margin: 0 !important;
+            transform: none !important;
+
+            border-radius: 12px;
+            display: none;
+            /* Assicura che sia chiuso di default */
+        }
+
+        #calc-modal.active {
+            display: flex;
+        }
+    }
+
+    /* Adatta il corpo interno */
+    .calc-body {
+        padding: 6px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    #result-display {
+        height: auto !important;
+        min-height: 20px;
+        max-height: 70px;
+        /* Consente fino a 3 righe intere */
+    }
+
+    .display-area {
+        padding: 5px;
+        margin-bottom: 5px;
+        min-height: 50px;
+    }
+
+    .var-tabs {
+        margin-bottom: 2px;
+    }
+
+    .var-tab {
+        padding: 8px 2px;
+        font-size: 12px;
+    }
+
+    .keypad {
+        flex: 1;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        grid-template-rows: repeat(6, 1fr) !important;
+        /* FIX: Le righe reali su mobile sono 6! */
+        gap: 3px !important;
+        margin-top: 5px;
+        min-height: 0;
+        flex-shrink: 1;
+    }
+
+    .key-btn {
+        height: 100% !important;
+        /* Forza il tasto a riempire la frazione di griglia uniformemente */
+        min-height: 28px;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .calc-action-btn {
+        height: 100% !important;
+        /* Come sopra, uniformità per i tasti azione */
+        padding: 10px 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    #expression-display {
+        font-size: 16px;
+    }
+}
+
+/* --- SIDEBAR TABS (Tech Style) --- */
+.sidebar-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    align-items: stretch;
+    height: calc(50px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0 10px;
+    border: none;
+    background: transparent;
+    color: #556677;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: #ccddee;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tab-btn.active {
+    color: #00aaff;
+    border-bottom: 2px solid #00aaff;
+    background: linear-gradient(to top, rgba(0, 170, 255, 0.1), transparent);
+    text-shadow: 0 0 8px rgba(0, 170, 255, 0.4);
+}
+
+/* Tasto Chiudi Rosso minimal */
+#close-sidebar-btn {
+    width: 40px;
+    background: rgba(255, 50, 50, 0.1);
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ff5555;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#close-sidebar-btn:hover {
+    background: rgba(255, 50, 50, 0.3);
+    color: white;
+}
+
+/* --- LISTA TERNE (Data Chips) --- */
+
+.triplet-btn {
+    background: rgba(255, 255, 255, 0.03);
+    color: #8899aa;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* border-left mantenuto dallo script JS per il colore */
+    border-radius: 4px;
+    padding: 8px 4px;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Consolas', monospace;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.triplet-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.triplet-btn.active {
+    background: rgba(0, 136, 255, 0.2) !important;
+    /* Sovrascrive per evidenziare */
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.tab-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+#triplets-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.triplets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.fano-btn {
+    background: rgba(0, 0, 0, 0.3);
+    color: #8899aa;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 10px 5px;
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.fano-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.fano-btn.active {
+    background-color: color-mix(in srgb, var(--fano-color), black 70%) !important;
+
+    border: 1px solid var(--fano-color) !important;
+
+    color: #eeeeee !important;
+    font-weight: normal !important;
+
+    box-shadow: none !important;
+    transform: none !important;
+    outline: none !important;
+}
+
+#zerodiv-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+#zerodiv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+}
+
+/* --- ZERO DIVISORS MODERN STYLE --- */
+.zerodiv-btn {
+    background: rgba(30, 35, 40, 0.6);
+    color: #aaccff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 6px 4px;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    /* Modern Font */
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.zerodiv-btn:hover {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: #00aaff;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 136, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.zerodiv-btn sub {
+    font-size: 0.7em;
+    vertical-align: baseline;
+    position: relative;
+    top: 0.3em;
+    margin-left: 1px;
+}

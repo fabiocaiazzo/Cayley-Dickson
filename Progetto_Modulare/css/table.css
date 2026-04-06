@@ -1,0 +1,119 @@
+/* --- TABLE STYLES (Dark Matrix) --- */
+#table-scroll {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+    background: transparent;
+    /* Usa lo sfondo glass della sidebar */
+    position: relative;
+}
+
+#sedenion-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 11px;
+    table-layout: fixed;
+    width: auto;
+    /* MODIFICA: Impedisce lo stretching */
+    margin: 0 auto;
+    /* Centra la tabella nel pannello */
+}
+
+#sedenion-table td,
+#sedenion-table th {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Bordi sottili */
+    text-align: center;
+    height: 24px;
+    min-width: 28px;
+    width: 28px;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+/* Headers Sticky */
+#sedenion-table th {
+    background-color: rgba(20, 30, 40, 0.95);
+    color: #00aaff;
+    position: sticky;
+    top: 0;
+    z-index: 102;
+    /* Aumentato per stare sopra la colonna laterale */
+    border-bottom: 1px solid #00aaff;
+    font-weight: 600;
+}
+
+#sedenion-table .first-col {
+    background-color: rgba(20, 30, 40, 0.95);
+    color: #00aaff;
+    position: sticky;
+    left: 0;
+    z-index: 101;
+    border-right: 1px solid #00aaff;
+    font-weight: 600;
+}
+
+/* Regola specifica per l'angolo in alto a sinistra (intersezione) */
+#sedenion-table th.first-col {
+    z-index: 103;
+    /* Massimo livello per non essere coperto da nessuno */
+}
+
+#tab-table {
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+}
+
+#tab-table.active {
+    display: flex;
+}
+
+.table-highlight {
+    position: relative;
+}
+
+.table-highlight::after {
+    display: none;
+    /* Rimuove completamente il velo nero */
+}
+
+.table-intersect {
+    border: 2px solid black !important;
+    font-weight: bold;
+    transform: scale(1.1);
+    z-index: 50;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* --- STILI FANO TABLE --- */
+.fano-selected {
+    transform: scale(1.15);
+    z-index: 60;
+    border: 2px solid white !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+}
+
+.fano-dimmed {
+    opacity: 0.15 !important;
+    filter: grayscale(1);
+    transition: opacity 0.3s;
+}
+
+.header-active {
+    background-color: #0088ff !important;
+    color: white !important;
+}
+
+#table-hint {
+    padding: 8px;
+    background: #202025;
+    color: #888;
+    font-size: 11px;
+    border-top: 1px solid #444;
+    text-align: center;
+    font-style: italic;
+}
