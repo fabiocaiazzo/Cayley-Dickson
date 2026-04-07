@@ -6,7 +6,7 @@ const dictionaries = { it, en };
 // Recupera la lingua salvata, altrimenti usa l'italiano di default
 let currentLang = localStorage.getItem('app_lang') || 'it';
 
-// Funzione per tradurre una chiave specifica (la useremo poi nei file JS)
+// Funzione per tradurre usna chiave specifica (la useremo poi nei file JS)
 export function t(key) {
     return dictionaries[currentLang][key] || key;
 }
