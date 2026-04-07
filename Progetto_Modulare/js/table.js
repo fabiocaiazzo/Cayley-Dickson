@@ -160,13 +160,15 @@ export function buildTable(limitIndex) {
         let html = '<thead><tr><th class="first-col" data-action="reset">&times;</th>';
 
         for (let i = 0; i <= maxDim; i++) {
-            const label = i === 0 ? "1" : "e<sub>" + i + "</sub>";
+            // Usa la traduzione per la componente reale
+            const label = i === 0 ? t('step_real') : "e<sub>" + i + "</sub>";
             html += `<th data-action="col" data-idx="${i}">${label}</th>`;
         }
         html += '</tr></thead><tbody>';
 
         for (let r = 0; r <= maxDim; r++) {
-            const rowLabel = r === 0 ? "1" : "e<sub>" + r + "</sub>";
+            // Usa la traduzione per la componente reale
+            const rowLabel = r === 0 ? t('step_real') : "e<sub>" + r + "</sub>";
             html += `<tr data-idx="${r}"><td class="first-col" data-action="row" data-idx="${r}">${rowLabel}</td>`;
 
             for (let c = 0; c <= maxDim; c++) {
@@ -262,3 +264,17 @@ export function buildTable(limitIndex) {
         }
     }
 }
+
+// Listener per aggiornare la tabella quando cambia la lingua
+window.addEventListener('languageChanged', () => {
+    // Forza la rigenerazione completa dell'HTML della tabella
+    const table = document.getElementById('sedenion-table');
+    if (table) {
+        table.innerHTML = ''; // Svuota la tabella per forzare la ricostruzione
+        buildTable(currentAlgState);
+    }
+    
+    // Aggiorna anche il suggerimento sotto la tabella
+    const tableHint = document.getElementById('table-hint');
+    if (tableHint) tableHint.innerHTML = t('hint_table');
+});

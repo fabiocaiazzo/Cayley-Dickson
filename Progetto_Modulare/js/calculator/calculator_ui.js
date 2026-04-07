@@ -140,15 +140,9 @@ export function updateVarIndicators() {
             indicator.style.display = isDefined ? 'block' : 'none';
         }
 
-        const tab = document.querySelector(`.var-tab[data-var="${v}"]`);
+        // Aggiorna il testo del tab con la traduzione corrente
         if (tab) {
-            if (isDefined) {
-                tab.style.color = '#00ffaa';
-                tab.style.textShadow = '0 0 5px rgba(0, 255, 170, 0.3)';
-            } else {
-                tab.style.color = '';
-                tab.style.textShadow = 'none';
-            }
+            tab.innerText = t('var_' + v);
         }
     });
 }
@@ -205,3 +199,10 @@ document.getElementById('btn-rand-s').addEventListener('click', () => genRandomV
 // Esegue il setup della griglia automaticamente al caricamento del modulo
 setupGrid();
 updateVarIndicators();
+
+window.addEventListener('languageChanged', () => {
+    updateVarIndicators();
+    // Aggiorna anche i placeholder o testi fissi se necessario
+    const exprInput = document.getElementById('expression-display');
+    if (exprInput) exprInput.placeholder = t('ph_expr');
+});

@@ -185,7 +185,9 @@ export function initSidebar() {
         btn.style.borderWidth = '2px';
         btn.style.color = '#eeeeee';
 
-        // Tooltip aggiornato
+        // Aggiungiamo una classe e salviamo l'indice per l'aggiornamento dinamico
+        btn.classList.add('fano-btn-dynamic');
+        btn.dataset.fanoIdx = idx;
         btn.title = titleText;
 
         // FIX: Logica Toggle. Se clicco lo stesso attivo, resetto la vista e torna alla camera standard.
@@ -203,3 +205,12 @@ export function initSidebar() {
         fanoButtons.push(btn);
     });
 }
+
+window.addEventListener('languageChanged', () => {
+    document.querySelectorAll('.fano-btn-dynamic').forEach(btn => {
+        const idx = parseInt(btn.dataset.fanoIdx);
+        if (idx === 0) btn.title = t('fano_std');
+        else if ([2, 4, 6, 8, 10, 12, 14].includes(idx)) btn.title = t('fano_split');
+        else btn.title = t('fano_div');
+    });
+});
