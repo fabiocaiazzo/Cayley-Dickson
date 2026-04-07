@@ -143,7 +143,7 @@ export function initUI() {
     themeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         currentTheme = (currentTheme + 1) % 6;
-        themeLabel.innerText = t('theme_label') + t('theme_' + currentTheme);
+        themeLabel.innerText = t('theme_label') + ": " + themeNames[currentTheme];
 
         scene.background = null;
         starField.visible = false;
@@ -228,7 +228,12 @@ export function initUI() {
     // Aggiorna i testi dinamici quando cambia la lingua
     window.addEventListener('languageChanged', () => {
         gridLabel.innerText = gridHelper.visible ? t('grid_on') : t('grid_off');
-        themeLabel.innerText = t('theme_label') + t('theme_' + currentTheme);
+        themeLabel.innerText = t('theme_label') + ": " + themeNames[currentTheme];
         if (helpNext) helpNext.innerText = currentHelpPage === helpPages.length - 1 ? t('btn_close') : t('btn_next');
     });
+
+    // Inizializzazione al primo avvio
+    setTimeout(() => {
+        themeLabel.innerText = t('theme_label') + ": " + themeNames[currentTheme];
+    }, 150);
 }

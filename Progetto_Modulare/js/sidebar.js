@@ -1,6 +1,7 @@
 import { container, camera, renderer, labelRenderer, tripletVisuals } from './scene.js';
 import { visualizeTripletByIndex, activeFanoIndex, animateCameraToDefault, visualizeFanoPlane } from './graph.js';
 import { forceUpdate, tripletButtons, fanoButtons, resetView } from './main.js';
+import { t } from './i18n.js';
 
 export function initSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -168,15 +169,15 @@ export function initSidebar() {
         if (idx === 0) {
             // IL PRIMO PIANO (Ottetti Standard): BLU
             color = '#4488ff';
-            titleText = "Ottetti Base (Algebra di divisione standard)";
+            titleText = t('fano_std');
         } else if (QUASI_OCT_INDICES.includes(idx)) {
             // ottetti spezzati: ROSSO
             color = '#ff4444';
-            titleText = "Ottetti spezzati (Contiene divisori dello zero)";
+            titleText = t('fano_split');
         } else {
             // ottetti di divisione: VERDE
             color = '#00cc44';
-            titleText = "Ottetti di divisione";
+            titleText = t('fano_div');
         }
 
         btn.style.setProperty('--fano-color', color);

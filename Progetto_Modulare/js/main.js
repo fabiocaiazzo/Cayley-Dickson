@@ -222,9 +222,9 @@ export function filterSubspace(limitIndex) {
     if (limitIndex === 7) tripletCount = 7;
 
     // Aggiorna testo Tab Sidebar
-    document.getElementById('tab-btn-triplets').innerText = `Terne (${tripletCount})`;
-    document.getElementById('tab-btn-table').innerText = `Tabella`;
-    document.getElementById('tab-btn-fano').innerText = `Piani Fano (15)`;
+    document.getElementById('tab-btn-triplets').innerText = `${t('tab_triplets')} (${tripletCount})`;
+    document.getElementById('tab-btn-table').innerText = t('tab_table');
+    document.getElementById('tab-btn-fano').innerText = `${t('tab_fano')} (15)`;
 
     // Filtro Punti 3D (VISIBILITÀ PUNTI)
     for (let idStr in pointObjects) {
@@ -276,12 +276,12 @@ export function updateCalcUI(limitIndex) {
                     <div id="formula-explanation-panel" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(30, 30, 35, 0.98); padding:20px; z-index:20; backdrop-filter:blur(10px); color:#eee; font-size:14px; line-height:1.6; font-family:'Segoe UI', sans-serif; text-align:center; align-items:center; justify-content:center; border-radius: 6px;">
                         ${t('form_desc')}
                     </div>
-                    <div class="formula-group-title" style="color:#aaaaff;">Quaternioni (&#x210D;):</div>
+                    <div class="formula-group-title" style="color:#aaaaff;">${t('cat_quat')} (&#x210D;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(3, '[a,b]', ['a','b'])">
                         <strong>[a,b] &ne; 0</strong> ${t('form_non_comm')}
                     </button>
 
-                    <div class="formula-group-title" style="color:#aaffaa; margin-top:8px;">Ottetti (&#x1D546;):</div>
+                    <div class="formula-group-title" style="color:#aaffaa; margin-top:8px;">${t('cat_oct')} (&#x1D546;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(7, '[a,b,c]', ['a','b','c'])">
                         <strong>[a,b,c] &ne; 0</strong> ${t('form_non_assoc')}
                     </button>
@@ -289,7 +289,7 @@ export function updateCalcUI(limitIndex) {
                         <strong>[a,a,b] = 0</strong> ${t('form_alt')}
                     </button>
 
-                    <div class="formula-group-title" style="color:#ffaaaa; margin-top:8px;">Sedenioni (&#x1D54A;):</div>
+                    <div class="formula-group-title" style="color:#ffaaaa; margin-top:8px;">${t('cat_sed')} (&#x1D54A;):</div>
                     <button class="formula-btn" onclick="runFormulaDemo(15, '[a,a,b]', ['a','b'])">
                         <strong>[a,a,b] &ne; 0</strong> ${t('form_non_alt')}
                     </button>
@@ -898,6 +898,25 @@ animate();
 
 renderRequested = true;
 updateCycleColors();
+
+window.addEventListener('languageChanged', () => {
+    // 1. Aggiorna il titolo principale e le sfere 3D
+    if (typeof activeFanoIndex !== 'undefined' && activeFanoIndex !== null) {
+        visualizeFanoPlane(activeFanoIndex, true);
+    } else {
+        filterSubspace(currentAlgState);
+    }
+    
+    // 2. Forza la ricostruzione dinamica del menu Formule e Divisori dello zero
+    if (typeof updateCalcUI === 'function') {
+        updateCalcUI(15);
+    }
+    
+    // 3. Forza l'aggiornamento della barra Swipe su Mobile
+    if (typeof window.applySwipeState === 'function' && window.currentSwipeState !== undefined) {
+        window.applySwipeState(window.currentSwipeState);
+    }
+});
 
 // =================== ZOOM TABELLA (PC & MOBILE) ==============
 

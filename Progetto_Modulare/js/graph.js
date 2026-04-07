@@ -5,6 +5,7 @@ import {
 } from './scene.js';
 import { currentAlgState, tripletButtons, fanoButtons, forceUpdate, resetView } from './main.js';
 import { buildTable, tableState } from './table.js';
+import { t } from './i18n.js';
 
 // --- GESTIONE COLORI TERNE (Tema Geometrico Fisso) ---
 const TETRA_VERTICES = [5, 6, 7, 12];
@@ -52,9 +53,9 @@ export function visualizeTripletByIndex(idx) {
     updateCycleColors();
 
     const titleTextElem = document.getElementById('alg-title-text');
-    if (currentAlgState === 3) titleTextElem.innerHTML = "QUATERNIONI";
-    else if (currentAlgState === 7) titleTextElem.innerHTML = "OTTETTI";
-    else titleTextElem.innerHTML = "SEDENIONI";
+    if (currentAlgState === 3) titleTextElem.innerHTML = t('alg_quat');
+    else if (currentAlgState === 7) titleTextElem.innerHTML = t('alg_oct');
+    else titleTextElem.innerHTML = t('alg_sed');
 
     const btn = tripletButtons[idx];
     if (btn) btn.classList.toggle('active');
@@ -204,7 +205,7 @@ export function visualizeFanoPlane(planeIdx, fromCalculator = false) {
     const fanoSubtitle = "{" + fanoIndices.map(i => "e<sub>" + i + "</sub>").join(", ") + "}";
 
     const titleTextElem = document.getElementById('alg-title-text');
-    const mainTitle = (currentAlgState === 3 ? "QUATERNIONI" : (currentAlgState === 7 ? "OTTETTI" : "SEDENIONI"));
+    const mainTitle = (currentAlgState === 3 ? t('alg_quat') : (currentAlgState === 7 ? t('alg_oct') : t('alg_sed')));
     titleTextElem.innerHTML = `${mainTitle}<div style="font-size: 13px; font-weight: normal; color: #ccc; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9; text-transform: none;">${fanoSubtitle}</div>`;
 
     updateCycleColors();

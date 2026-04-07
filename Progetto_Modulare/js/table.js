@@ -1,6 +1,7 @@
 import { pointObjects, sphereMatCenter, sphereMat, tripletVisuals } from './scene.js';
 import { currentAlgState, tripletButtons, resetView } from './main.js';
 import { updateCycleColors, highlightConnections, highlightSingleTriplet } from './graph.js';
+import { t } from './i18n.js';
 
 // --- FUNZIONI TABELLA ---
 export let tableState = { activeRow: null, activeCol: null };
@@ -22,9 +23,9 @@ export function activateTripletFromTable(r, c) {
 
     // MODIFICA: Reset del titolo principale
     const titleTextElem = document.getElementById('alg-title-text');
-    if (currentAlgState === 3) titleTextElem.innerHTML = "QUATERNIONI";
-    else if (currentAlgState === 7) titleTextElem.innerHTML = "OTTETTI";
-    else titleTextElem.innerHTML = "SEDENIONI";
+    if (currentAlgState === 3) titleTextElem.innerHTML = t('alg_quat');
+    else if (currentAlgState === 7) titleTextElem.innerHTML = t('alg_oct');
+    else titleTextElem.innerHTML = t('alg_sed');
 
     // 0. RESET PREVENTIVO COLORI (Per togliere residui divisori zero)
     for (let k in pointObjects) {

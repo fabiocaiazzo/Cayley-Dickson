@@ -3,6 +3,7 @@ import { pointObjects, tripletVisuals, sphereMatCenter } from '../scene.js';
 import { visualizeFanoPlane } from '../graph.js';
 import { currentVar, saveVar, switchVar, setGrid } from './calculator_ui.js';
 import { currentAlgState, setCurrentAlgState, filterSubspace, resetView, openCalculator } from '../main.js';
+import { t } from '../i18n.js';
 
 export function updateZeroDivisorUI(limitIndex) {
     const zdBtnCalc = document.getElementById('calc-zerodiv-btn');
@@ -39,7 +40,7 @@ export function updateZeroDivisorUI(limitIndex) {
             // Etichetta Toggle
             const label = document.createElement('span');
             label.className = "zerodiv-toggle";
-            label.innerHTML = isFanoMode ? "PIANI FANO &#8646;" : "FULCRO &#8646;";
+            label.innerHTML = isFanoMode ? `${t('zd_mode_fano')} &#8646;` : `${t('zd_mode_fulcrum')} &#8646;`;
             label.style.color = isFanoMode ? "#aaaaff" : "#00aaff";
             label.style.fontWeight = "bold";
             label.style.fontSize = "13px";
@@ -47,7 +48,7 @@ export function updateZeroDivisorUI(limitIndex) {
             label.style.cursor = "pointer";
             label.style.whiteSpace = "nowrap";
             label.style.flexShrink = "0";
-            label.title = "Clicca per cambiare modalità di raggruppamento";
+            label.title = t('zd_mode_tooltip');
             label.onclick = () => { isFanoMode = !isFanoMode; renderOverlayContent(); };
             navBar.appendChild(label);
 
@@ -248,7 +249,7 @@ export function updateZeroDivisorUI(limitIndex) {
                             zIndices.forEach(id => { if (pointObjects[id]) { pointObjects[id].mesh.visible = true; pointObjects[id].label.visible = true; } });
                         }
 
-                        if (titleElem) titleElem.innerHTML = `Divisore dello zero<div style="font-size: 13px; font-weight: normal; color: #ccc; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9; text-transform: none;">${txt}</div>`;
+                        if (titleElem) titleElem.innerHTML = `${t('zd_title_single')}<div style="font-size: 13px; font-weight: normal; color: #ccc; margin-top: 5px; font-family: 'Times New Roman'; opacity: 0.9; text-transform: none;">${txt}</div>`;
                     };
                     zdContentGrid.appendChild(btn);
                 });

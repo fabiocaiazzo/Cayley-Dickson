@@ -1,4 +1,5 @@
 import { updateCalcUI } from './main.js';
+import { t } from './i18n.js';
 
 // INIEZIONE CSS GLOBALE PER CAROSELLO UNIVERSALE SU TUTTI I DISPOSITIVI
 const universalCarouselCss = document.createElement('style');
@@ -94,20 +95,20 @@ window.applySwipeState = function (state) {
     const calcHelperBtn = document.getElementById('calc-helper-label-mobile');
 
     if (state === 0) {
-        if (navL) navL.innerHTML = '&laquo; Divisori dello zero';
-        if (navR) navR.innerHTML = 'Calcolatrice &raquo;';
+        if (navL) navL.innerHTML = `&laquo; ${t('sw_zerodiv')}`;
+        if (navR) navR.innerHTML = `${t('sw_calc')} &raquo;`;
         if (mobileHelpBtn) mobileHelpBtn.style.display = 'none';
         if (formHelpBtn) formHelpBtn.style.display = 'flex';
         if (calcHelperBtn) calcHelperBtn.style.display = 'none';
     } else if (state === 2) {
-        if (navL) navL.innerHTML = '&laquo; Calcolatrice';
-        if (navR) navR.innerHTML = 'Formule &raquo;';
+        if (navL) navL.innerHTML = `&laquo; ${t('sw_calc')}`;
+        if (navR) navR.innerHTML = `${t('sw_formulas')} &raquo;`;
         if (mobileHelpBtn) mobileHelpBtn.style.display = 'flex';
         if (formHelpBtn) formHelpBtn.style.display = 'none';
         if (calcHelperBtn) calcHelperBtn.style.display = 'none';
     } else {
-        if (navL) navL.innerHTML = '&laquo; Formule';
-        if (navR) navR.innerHTML = 'Divisori dello zero &raquo;';
+        if (navL) navL.innerHTML = `&laquo; ${t('sw_formulas')}`;
+        if (navR) navR.innerHTML = `${t('sw_zerodiv')} &raquo;`;
         if (mobileHelpBtn) mobileHelpBtn.style.display = 'none';
         if (formHelpBtn) formHelpBtn.style.display = 'none';
         if (calcHelperBtn) calcHelperBtn.style.display = 'flex';

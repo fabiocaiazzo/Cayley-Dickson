@@ -194,5 +194,39 @@ export default {
     "step_res": "Result",
     "step_calc": "Calculation",
     "step_sub": "Subtraction:",
-    "step_err_catch": "Impossible to show steps:"
+    "step_err_catch": "Impossible to show steps:",
+
+    // Fano Planes Tooltips
+    "fano_std": "Base Octonions (Standard division algebra)",
+    "fano_split": "Split Octonions (Contains zero divisors)",
+    "fano_div": "Division Octonions",
+
+    "sw_formulas": "Formulas",
+    "sw_calc": "Calculator",
+    "sw_zerodiv": "Zero Divisors",
+    "zd_mode_fano": "FANO PLANES",
+    "zd_mode_fulcrum": "FULCRUM",
+    "zd_mode_tooltip": "Click to change grouping mode",
+    "zd_title_single": "Zero Divisor",
+    "cat_quat": "Quaternions",
+    "cat_oct": "Octonions",
+    "cat_sed": "Sedenions",
+
+    "dt_closure": "Close subalgebra",
+    "menu_reset_cam": "Reset Camera",
+    "menu_grid": "Toggle Grid",
+    "menu_open_help": "Open Guide",
+    "menu_32_title": "Trigintaduonions",
+    "menu_theme": "Change Theme",
+    "menu_play_pause": "Play/Pause",
+    "dt_show_all": "Show all",
+    "tt_insert_base": "Insert basis",
+    "eval_assign": "Write =",
+    "eval_calc": "Calculate",
+
+    "settings_lang": "LANGUAGE",
+    "var_a": "Var A",
+    "var_b": "Var B",
+    "var_c": "Var C",
+    "var_d": "Var D"
 };

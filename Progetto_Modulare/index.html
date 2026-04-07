@@ -125,7 +125,7 @@
                         <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor; margin-right:4px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg> <span data-i18n="btn_clear_log">Pulisci</span>
                     </span>
                     <span id="btn-close-history" style="cursor:pointer; color:#ccc; font-size:24px; line-height:1;"
-                        title="Chiudi">&times;</span>
+                        title="Chiudi" data-i18n-title="btn_close">&times;</span>
                 </div>
             </div>
             <div id="calc-log">
@@ -273,13 +273,11 @@
                         style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid #334455; flex-shrink:0;">
                         <button id="ch-prev-btn"
                             style="background:#2a3a4a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; visibility:hidden;"
-                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(-1)">&lt;
-                            Indietro</button>
+                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(-1)" data-i18n="btn_prev">&lt; Indietro</button>
                         <div id="ch-page-indicator" style="color:#888; font-size:12px;">1 / 5</div>
                         <button id="ch-next-btn"
                             style="background:#3a4a5a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;"
-                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(1)">Avanti
-                            &gt;</button>
+                            onclick="if(window.changeCalcHelperPage) window.changeCalcHelperPage(1)" data-i18n="btn_next">Avanti &gt;</button>
                     </div>
                 </div>
             </div>
@@ -352,11 +350,11 @@
                         style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid #334455; flex-shrink:0;">
                         <button id="zd-prev-btn"
                             style="background:#2a3a4a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; visibility:hidden;"
-                            onclick="if(window.changeZdPage) window.changeZdPage(-1)">&lt; Indietro</button>
+                            onclick="if(window.changeZdPage) window.changeZdPage(-1)" data-i18n="btn_prev">&lt; Indietro</button>
                         <div id="zd-page-indicator" style="color:#aaa; font-size:12px;">1 / 4</div>
                         <button id="zd-next-btn"
                             style="background:#3a4a5a; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;"
-                            onclick="if(window.changeZdPage) window.changeZdPage(1)">Avanti &gt;</button>
+                            onclick="if(window.changeZdPage) window.changeZdPage(1)" data-i18n="btn_next">Avanti &gt;</button>
                     </div>
                 </div>
 
@@ -460,7 +458,7 @@
                     <button class="key-btn has-shift" onclick="handleKey('()')">
                         <span class="key-primary">( )</span><span class="key-secondary">[x,y]</span>
                     </button>
-                    <button class="key-btn key-var has-shift" onclick="handleKey('e_n')" title="Inserisci base">
+                    <button class="key-btn key-var has-shift" onclick="handleKey('e_n')" title="Inserisci base" data-i18n-title="tt_insert_base">
                         <span class="key-primary">e<sub>n</sub></span><span class="key-secondary">Ker()</span>
                     </button>
 
@@ -495,11 +493,11 @@
                         <div id="eval-popup"
                             style="display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:rgba(20,25,30,0.95); border:1px solid #00ffaa; border-radius:6px; flex-direction:column; padding:4px; gap:4px; z-index:3000; box-shadow:0 10px 20px rgba(0,0,0,0.8); backdrop-filter:blur(10px);">
                             <button class="key-btn key-eval" style="height:36px; padding:0 15px; font-size:14px;"
-                                onclick="handleKey('assign'); hideEvalPopup();">Scrivi =</button>
+                                onclick="handleKey('assign'); hideEvalPopup();" data-i18n="eval_assign">Scrivi =</button>
                             <button class="key-btn key-eval" style="height:36px; padding:0 15px;"
                                 onclick="handleKey('=?'); hideEvalPopup();">=?</button>
                             <button class="key-btn key-eval" style="height:36px; padding:0 15px;"
-                                onclick="handleKey('='); hideEvalPopup();">Calcola</button>
+                                onclick="handleKey('='); hideEvalPopup();" data-i18n="eval_calc">Calcola</button>
                         </div>
                         <button class="key-btn key-eval has-shift" style="width:100%;"
                             onpointerdown="startEvalPress(event)" onpointerup="endEvalPress(event)"
@@ -521,10 +519,10 @@
             <div id="view-vars" class="calc-view">
 
                 <div class="var-tabs" style="margin-top: 10px;">
-                    <div class="var-tab active" data-var="a">Var A</div>
-                    <div class="var-tab" data-var="b">Var B</div>
-                    <div class="var-tab" data-var="c">Var C</div>
-                    <div class="var-tab" data-var="d">Var D</div>
+                    <div class="var-tab active" data-var="a" data-i18n="var_a">Var A</div>
+                    <div class="var-tab" data-var="b" data-i18n="var_b">Var B</div>
+                    <div class="var-tab" data-var="c" data-i18n="var_c">Var C</div>
+                    <div class="var-tab" data-var="d" data-i18n="var_d">Var D</div>
                 </div>
 
                 <div style="margin-bottom: 5px;">
@@ -572,7 +570,7 @@
                 </div>
             </div>
 
-            <div id="settings-mobile-btn" title="Impostazioni Vista">
+            <div id="settings-mobile-btn" title="Impostazioni Vista" data-i18n-title="dt_settings">
                 <svg class="icon-svg" viewBox="0 0 24 24">
                     <path
                         d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07-.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
@@ -588,7 +586,7 @@
                 </div>
 
                 <div class="dock-group">
-                    <div id="closure-generator-btn" class="ui-btn" data-tooltip="Chiudi sottoalgebra"
+                    <div id="closure-generator-btn" class="ui-btn" data-tooltip="Chiudi sottoalgebra" data-i18n-tooltip="dt_closure"
                         style="display: none; position: relative;">
                         <span id="closure-badge"
                             style="position: absolute; top: -5px; right: -5px; background: #00ffaa; color: #000; border-radius: 50%; width: 16px; height: 16px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 5px rgba(0,255,170,0.8); pointer-events: none; z-index: 10;">0</span>
@@ -607,14 +605,14 @@
 
                     <div id="settings-menu">
                         <div class="menu-grid">
-                            <button id="home-btn" class="menu-btn" title="Reset Camera">
+                            <button id="home-btn" class="menu-btn" title="Reset Camera" data-i18n-title="menu_reset_cam">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                                 </svg>
                                 <span data-i18n="menu_reset">Reset Vista</span>
                             </button>
 
-                            <button id="grid-toggle-btn" class="menu-btn" title="Mostra/Nascondi Griglia">
+                            <button id="grid-toggle-btn" class="menu-btn" title="Mostra/Nascondi Griglia" data-i18n-title="menu_grid">
                                 <svg viewBox="0 0 24 24">
                                     <path
                                         d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z" />
@@ -622,7 +620,7 @@
                                 <span id="grid-label" data-i18n="grid_off">Griglia: OFF</span>
                             </button>
 
-                            <button id="help-btn-trigger" class="menu-btn" title="Apri Guida">
+                            <button id="help-btn-trigger" class="menu-btn" title="Apri Guida" data-i18n-title="menu_open_help">
                                 <svg viewBox="0 0 24 24">
                                     <path
                                         d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" />
@@ -631,13 +629,13 @@
                             </button>
 
                             <button id="toggle-32-btn" class="menu-btn" onclick="toggle32Ions()"
-                                title="Trigintaduenioni">
+                                title="Trigintaduenioni" data-i18n-title="menu_32_title">
                                 <span
                                     style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 22px; line-height: 1;">&#x1D54B;</span>
                                 <span data-i18n="menu_32">32-ioni (beta)</span>
                             </button>
 
-                            <button id="theme-btn" class="menu-btn full-width" title="Cambia Sfondo">
+                            <button id="theme-btn" class="menu-btn full-width" title="Cambia Sfondo" data-i18n-title="menu_theme">
                                 <svg viewBox="0 0 24 24">
                                     <path
                                         d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
@@ -647,7 +645,7 @@
                         </div>
 
                         <div class="setting-row" style="justify-content: space-between;">
-                            <span style="font-weight:600; font-size:10px; letter-spacing:0.5px;">LINGUA / LANG</span>
+                            <span style="font-weight:600; font-size:10px; letter-spacing:0.5px;" data-i18n="settings_lang">LINGUA</span>
                             <select id="lang-selector" style="background:#1a1f25; color:#00aaff; border:1px solid #334455; border-radius:4px; font-size:11px; padding:2px 5px; cursor:pointer;">
                                 <option value="it">Italiano</option>
                                 <option value="en">English</option>
@@ -655,7 +653,7 @@
                         </div>
 
                         <div class="setting-row">
-                            <button id="play-pause-btn" title="Play/Pausa">
+                            <button id="play-pause-btn" title="Play/Pausa" data-i18n-title="menu_play_pause">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                                 </svg>
@@ -686,7 +684,7 @@
                         </div>
                     </div>
 
-                    <div id="dock-show-all-btn" class="ui-btn" data-tooltip="Mostra tutto" style="display:none;">
+                    <div id="dock-show-all-btn" class="ui-btn" data-tooltip="Mostra tutto" data-i18n-tooltip="dt_show_all" style="display:none;">
                         <svg class="icon-svg" viewBox="0 0 24 24">
                             <path
                                 d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />

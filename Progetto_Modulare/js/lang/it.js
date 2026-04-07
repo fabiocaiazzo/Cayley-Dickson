@@ -194,5 +194,39 @@ export default {
     "step_res": "Risultato",
     "step_calc": "Calcolo",
     "step_sub": "Sottrazione:",
-    "step_err_catch": "Impossibile mostrare i passaggi:"
+    "step_err_catch": "Impossibile mostrare i passaggi:",
+
+    // Tooltip Piani di Fano
+    "fano_std": "Ottetti Base (Algebra di divisione standard)",
+    "fano_split": "Ottetti spezzati (Contiene divisori dello zero)",
+    "fano_div": "Ottetti di divisione",
+
+    "sw_formulas": "Formule",
+    "sw_calc": "Calcolatrice",
+    "sw_zerodiv": "Divisori dello zero",
+    "zd_mode_fano": "PIANI FANO",
+    "zd_mode_fulcrum": "FULCRO",
+    "zd_mode_tooltip": "Clicca per cambiare modalità di raggruppamento",
+    "zd_title_single": "Divisore dello zero",
+    "cat_quat": "Quaternioni",
+    "cat_oct": "Ottetti",
+    "cat_sed": "Sedenioni",
+
+    "dt_closure": "Chiudi sottoalgebra",
+    "menu_reset_cam": "Reset Camera",
+    "menu_grid": "Mostra/Nascondi Griglia",
+    "menu_open_help": "Apri Guida",
+    "menu_32_title": "Trigintaduenioni",
+    "menu_theme": "Cambia Sfondo",
+    "menu_play_pause": "Play/Pausa",
+    "dt_show_all": "Mostra tutto",
+    "tt_insert_base": "Inserisci base",
+    "eval_assign": "Scrivi =",
+    "eval_calc": "Calcola",
+
+    "settings_lang": "LINGUA",
+    "var_a": "Var A",
+    "var_b": "Var B",
+    "var_c": "Var C",
+    "var_d": "Var D"
 };
