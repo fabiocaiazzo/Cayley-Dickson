@@ -228,11 +228,11 @@ window.explainAssoc = function (a, b, c) {
 
     return `<div style="margin-top:5px; background:#111; padding:8px; border-radius:4px; font-size:12px; border-left:2px solid #aa55ff;">
                 <div style="color:#aaa; font-style:italic;">${t('step_formula')} [a,b,c] = (a&middot;b)&middot;c - a&middot;(b&middot;c)</div>
-                <div style="margin-top:5px;">1. Gruppo (AB)C:</div>
+                <div style="margin-top:5px;">1. ${t('step_group')} (AB)C:</div>
                 <div style="padding-left:10px; color:#888;">a&middot;b = ${window.formatVecGlobal(ab)}</div>
                 <div style="padding-left:10px; color:#88ffff;">${t('step_res')} (AB)C = ${t1}</div>
                 
-                <div style="margin-top:5px;">2. Gruppo A(BC):</div>
+                <div style="margin-top:5px;">2. ${t('step_group')} A(BC):</div>
                 <div style="padding-left:10px; color:#888;">b&middot;c = ${window.formatVecGlobal(bc)}</div>
                 <div style="padding-left:10px; color:#ff88ff;">${t('step_res')} A(BC) = ${t2}</div>
 

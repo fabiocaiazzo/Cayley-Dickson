@@ -553,6 +553,68 @@
         </div>
     </div>
 
+    <div id="rotation-ui" lang="en-US" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%); background:rgba(20,25,30,0.85); padding:15px; border-radius:12px; border:1px solid #445566; color:#fff; z-index:900; font-family:'Segoe UI',sans-serif; backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px); flex-direction:column; align-items:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); user-select:none; -webkit-user-select:none; touch-action:none;">
+    
+    <div id="rot-help-btn" style="position:absolute; top:10px; right:10px; cursor:pointer; width:22px; height:22px; border:1px solid #667788; border-radius:50%; color:#667788; font-size:12px; font-weight:bold; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.color='#00aaff'; this.style.borderColor='#00aaff';" onmouseout="this.style.color='#667788'; this.style.borderColor='#667788';">?</div>
+
+    <div data-i18n="rot_title" style="font-weight:bold; color:#00aaff; margin-bottom:10px; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-right:15px;">Quaternione di Rotazione</div>
+    <div style="display:flex; gap:15px; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <label data-i18n="rot_axis_x" style="font-size:11px; color:#ff4444; font-weight:bold; margin-bottom:3px;">ASSE X</label> 
+            <input type="text" inputmode="decimal" id="rot-axis-x" value="0.00" style="width:50px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #ff4444; padding:4px; text-align:center; border-radius:4px; font-family:monospace;">
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <label data-i18n="rot_axis_y" style="font-size:11px; color:#44ff44; font-weight:bold; margin-bottom:3px;">ASSE Y</label> 
+            <input type="text" inputmode="decimal" id="rot-axis-y" value="0.00" style="width:50px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #44ff44; padding:4px; text-align:center; border-radius:4px; font-family:monospace;">
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <label data-i18n="rot_axis_z" style="font-size:11px; color:#4444ff; font-weight:bold; margin-bottom:3px;">ASSE Z</label> 
+            <input type="text" inputmode="decimal" id="rot-axis-z" value="1.00" style="width:50px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #4444ff; padding:4px; text-align:center; border-radius:4px; font-family:monospace;">
+        </div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; width:100%; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+        <label data-i18n="rot_angle" style="font-size:11px; color:#aaa; font-weight:bold; white-space:nowrap;">ANGOLO (&deg;):</label> 
+        <input type="range" id="rot-angle-slider" min="0" max="360" value="0" style="flex:1;">
+        <input type="text" inputmode="decimal" id="rot-angle-num" value="0.0" style="width:55px; background:rgba(0,0,0,0.3); color:#00ffaa; border:1px solid #005544; padding:4px; text-align:center; border-radius:4px; font-weight:bold; font-family:monospace;">
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; width:100%; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-top:5px;">
+        <label data-i18n="rot_quat" style="font-size:11px; color:#aaa; font-weight:bold; margin-bottom:8px; letter-spacing:0.5px;">QUATERNIONE (a + bi + cj + dk)</label>
+        <div style="display:flex; gap:3px; justify-content:center; align-items:center; width:100%; font-family:monospace; font-size:14px; font-weight:bold;">
+            <input type="text" inputmode="decimal" id="rot-q-w" value="1.00" title="a (Parte reale)" style="width:42px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #667788; padding:4px; text-align:center; border-radius:4px; font-family:monospace;" placeholder="a">
+            <span style="color:#aaa; font-weight:normal;">+</span>
+            <input type="text" inputmode="decimal" id="rot-q-x" value="0.00" title="b (Coefficiente i)" style="width:42px; background:rgba(0,0,0,0.3); color:#ff4444; border:1px solid #667788; padding:4px; text-align:center; border-radius:4px; font-family:monospace;" placeholder="b"><span style="color:#ff4444;">i</span>
+            <span style="color:#aaa; font-weight:normal;">+</span>
+            <input type="text" inputmode="decimal" id="rot-q-y" value="0.00" title="c (Coefficiente j)" style="width:42px; background:rgba(0,0,0,0.3); color:#44ff44; border:1px solid #667788; padding:4px; text-align:center; border-radius:4px; font-family:monospace;" placeholder="c"><span style="color:#44ff44;">j</span>
+            <span style="color:#aaa; font-weight:normal;">+</span>
+            <input type="text" inputmode="decimal" id="rot-q-z" value="0.00" title="d (Coefficiente k)" style="width:42px; background:rgba(0,0,0,0.3); color:#4444ff; border:1px solid #667788; padding:4px; text-align:center; border-radius:4px; font-family:monospace;" placeholder="d"><span style="color:#4444ff;">k</span>
+        </div>
+    </div>
+
+    <div id="rot-help-panel" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(20,25,30,0.98); border-radius:12px; z-index:20; padding:15px; text-align:left; font-size:13px; color:#eee; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #445566; padding-bottom:5px; margin-bottom:10px;">
+            <strong data-i18n="rot_conv_title" style="color:#00aaff;">Conversione Quaternioni</strong>
+            <span id="close-rot-help" style="cursor:pointer; font-size:20px; color:#ff5555; line-height:1;">&times;</span>
+        </div>
+        <div>
+            <span data-i18n="rot_conv_p1">Dato un asse di rotazione <b style="color:#aaa;">(x, y, z)</b> normalizzato e un angolo <b style="color:#00ffaa;">&theta;</b>, il quaternione di rotazione <b>q = a + bi + cj + dk</b> è:<br><br></span>
+            <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; font-family:monospace; margin-bottom:10px;">
+                <b style="color:#fff;">a</b> = cos(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                <b style="color:#ff4444;">b</b> = x &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                <b style="color:#44ff44;">c</b> = y &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                <b style="color:#4444ff;">d</b> = z &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)
+            </div>
+            <span data-i18n="rot_conv_p2">La conversione inversa (da quaternione ad asse/angolo) è:<br><br></span>
+            <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; font-family:monospace;">
+                <b style="color:#00ffaa;">&theta;</b> = 2 &middot; arccos(a)<br>
+                <b>(x, y, z)</b> = (b, c, d) / &radic;(1 - a&sup2;)
+            </div>
+            <div data-i18n="rot_conv_note" style="margin-top:10px; font-size:11px; color:#8899aa; line-height:1.2;">
+                <i>Nota: i quaternioni inseriti manualmente nella barra vengono normalizzati (q/|q|) in automatico per generare sempre rotazioni geometricamente valide.</i>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div id="main-container">
         <div id="canvas-container">
             <div id="top-bar">
@@ -595,6 +657,14 @@
                     </div>
 
                     <div class="dock-divider" id="closure-divider" style="display: none;"></div>
+
+                    <div id="rotation-toggle-btn" class="ui-btn" data-tooltip="Rotazione 3D" data-i18n-tooltip="dt_rotation">
+    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20 M2 12h20 M4.93 4.93l14.14 14.14" stroke="currentColor" opacity="0.6"/>
+        <circle cx="12" cy="12" r="6" stroke="#00aaff" stroke-width="2" />
+        <path d="M12 6a6 6 0 0 1 6 6" stroke="#00ffaa" stroke-width="2"/>
+    </svg>
+</div>
 
                     <div id="settings-toggle-btn" class="ui-btn" data-tooltip="Impostazioni vista" data-i18n-tooltip="dt_settings">
                         <svg class="icon-svg" viewBox="0 0 24 24">
@@ -649,6 +719,10 @@
                             <select id="lang-selector" style="background:#1a1f25; color:#00aaff; border:1px solid #334455; border-radius:4px; font-size:11px; padding:2px 5px; cursor:pointer;">
                                 <option value="it">Italiano</option>
                                 <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                                <option value="es">Español</option>
+                                <option value="pt">Português</option>
                             </select>
                         </div>
 
@@ -713,7 +787,7 @@
         <div class="sidebar-tabs">
             <button class="tab-btn active" data-tab="triplets" id="tab-btn-triplets" data-i18n="tab_triplets">Terne</button>
             <button class="tab-btn" data-tab="fano" id="tab-btn-fano" style="display:none;" data-i18n="tab_fano">Piani Fano</button>
-            <button class="tab-btn" data-tab="pg32" id="tab-btn-pg32" style="display:none;">PG(3,2)</button>
+            <button class="tab-btn" data-tab="pg32" id="tab-btn-pg32" style="display:none;" data-i18n="tab_pg32">PG(3,2)</button>
             <button class="tab-btn" data-tab="table" id="tab-btn-table" data-i18n="tab_table">Tabella</button>
             <button id="close-sidebar-btn" style="display:none;">&times;</button>
         </div>

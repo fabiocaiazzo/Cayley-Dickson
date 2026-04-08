@@ -27,13 +27,24 @@ import { initSidebar } from './sidebar.js';
 
 // Importiamo la logica e il gruppo 3D dei Trigintaduenioni
 import { graph32Group, toggle32Ions, buildPG32Graph, build32IonGraph } from './ions32.js';
-window.toggle32Ions = toggle32Ions;
+window.toggle32Ions = () => {
+    if (isRotationMode) toggleRotationMode();
+    toggle32Ions();
+};
 window.buildPG32Graph = buildPG32Graph;
 
 // Inizializziamo gli eventi e i listener mobile (Swipe / Carousel)
 import './mobile.js';
 // Importiamo l'inizializzazione della UI Globale (Sfondi, Impostazioni, Help)
 import { initUI, starField, gridHelper } from './ui.js';
+
+// Cerca questo codice e incollalo (es. intorno a riga 25)
+import { initRotation, toggleRotationMode, isRotationMode } from './rotation.js';
+
+// Avvolgiamo la chiamata per evitare l'errore di inizializzazione (Cannot access before initialization)
+window.addEventListener('forceRender', () => forceUpdate());
+window.addEventListener('triggerResetView', () => resetView());
+
 // Importiamo il motore matematico e le variabili di memoria
 import { storedVars, storedAns, evaluateExpression, validateAssociativity } from './parser.js';
 // Importiamo i moduli della calcolatrice
@@ -96,6 +107,11 @@ function updateAlgebraState(forcedState) {
     // FIX BUG: Se siamo nei 32-ioni, usciamo spegnendo il loro grafo speciale
     if (window.is32IonMode) {
         window.toggle32Ions();
+    }
+
+    // Se siamo in modalità rotazione, esci per poter usare la barra delle algebre
+    if (isRotationMode) {
+        toggleRotationMode();
     }
 
     // FIX: Pulisci completamente la selezione nodi per chiusura algebrica
@@ -425,27 +441,41 @@ if (calcHelperCheckMobile && calcHelperOverlay) {
 
 initUI();
 initSidebar();
+initRotation();
+
+const rotToggleBtn = document.getElementById('rotation-toggle-btn');
+if (rotToggleBtn) {
+    rotToggleBtn.addEventListener('click', () => {
+        // Forza l'algebra ad H (Quaternioni) e spegni i 32-ioni prima di aprire la rotazione
+        if (!isRotationMode && (currentAlgState !== 3 || window.is32IonMode)) {
+            updateAlgebraState(3);
+        }
+        toggleRotationMode();
+    });
+}
 
 // ===================== ADVANCED CALCULATOR ===================
 
 const calcModal = document.getElementById('calc-modal');
-calcModal.addEventListener('pointerdown', () => {
-    calcModal.style.zIndex = ++window.highestZIndex;
-});
-
 const calcToggle = document.getElementById('calc-toggle-btn');
 // const calcClose = document.getElementById('close-calc'); // RIMOSSO
 
 // --- LOGICA APERTURA / CHIUSURA (TOGGLE) ---
 
 export function resetCalcPosition() {
-    // FIX NASA HUD: Resetta alla posizione "Docked" in alto a sinistra
-    // Queste coordinate devono corrispondere a quelle del CSS #calc-modal
-    calcModal.style.top = '80px';
-    calcModal.style.left = '30px';
-
-    // Rimuove vecchie trasformazioni di centraggio
-    calcModal.style.transform = 'none';
+    // Posizionamento differenziato tra Desktop e Mobile
+    if (window.innerWidth <= 768) {
+        // Su mobile: più in basso per non coprire il titolo, e centrata
+        calcModal.style.top = '120px';
+        calcModal.style.left = '50%';
+        calcModal.style.transform = 'translateX(-50%)';
+    } else {
+        // Su Desktop: posizione "Docked" originale in alto a sinistra
+        calcModal.style.top = '80px';
+        calcModal.style.left = '30px';
+        calcModal.style.transform = 'none';
+    }
+    
     calcModal.style.margin = '0';
 }
 
@@ -486,11 +516,20 @@ function toggleCalculator() {
         return;
     }
 
+    const currentZ = parseInt(calcModal.style.zIndex || 0);
+    const isTop = currentZ === window.highestZIndex;
     const isMobile = window.innerWidth <= 768;
+
     if (isMobile) {
         const wasActive = calcModal.classList.contains('active') &&
             !calcModal.classList.contains('formulas-mobile-mode') &&
             !calcModal.classList.contains('zerodiv-mobile-mode');
+
+        // Se è già aperta ma NON in primo piano, portala davanti senza chiuderla
+        if (wasActive && !isTop) {
+            calcModal.style.zIndex = ++window.highestZIndex;
+            return;
+        }
 
         // Chiudi tutto per resettare lo stato
         calcModal.classList.remove('active', 'formulas-mobile-mode', 'zerodiv-mobile-mode');
@@ -520,6 +559,13 @@ function toggleCalculator() {
         }
     } else {
         const isOpen = calcModal.classList.contains('active');
+
+        // Se è già aperta ma NON in primo piano, portala davanti senza chiuderla
+        if (isOpen && !isTop) {
+            calcModal.style.zIndex = ++window.highestZIndex;
+            return;
+        }
+
         if (!isOpen) calcModal.style.zIndex = ++window.highestZIndex;
 
         if (isOpen) {
@@ -553,12 +599,47 @@ let dragOffsetY = 0;
 
 // Funzione helper per determinare se l'elemento cliccato è interattivo
 function isInteractive(target) {
-    // FIX MOBILE: Su mobile permettiamo il trascinamento verticale da ovunque, disabilitiamo solo per le aree scrollabili interne e input
+    // FIX MOBILE: Su mobile permettiamo il trascinamento verticale da ovunque (anche dallo sfondo di Formule e Divisori).
+    // Disabilitiamo il trascinamento SOLO se si tocca specificamente un bottone interattivo, una label, o un pannello di spiegazione.
     if (window.innerWidth <= 768) {
-        return target.closest('input') || target.closest('#calc-formula-menu') || target.closest('#zerodiv-content-grid') || target.closest('#steps-content') || target.closest('#kernel-inputs-container') || target.closest('#result-display');
+        return target.closest('input') || 
+               target.closest('button') || 
+               target.closest('.formula-btn') || 
+               target.closest('.zerodiv-btn') || 
+               target.closest('.fano-btn') || 
+               target.closest('label') || 
+               target.closest('#steps-content') || 
+               target.closest('#kernel-inputs-container') || 
+               target.closest('#result-display') ||
+               target.closest('#formula-explanation-panel') ||
+               target.closest('#zerodiv-explanation-panel') ||
+               target.closest('#calc-helper-panel') ||
+               target.closest('.log-entry') || 
+               target.closest('#calc-log');
     }
-    // Su Desktop manteniamo il blocco originale
-    return target.closest('button') || target.closest('input') || target.closest('select') || target.closest('.icon-btn') || target.closest('.var-tab') || target.closest('.log-entry') || target.closest('.display-area') || target.closest('#calc-formula-menu') || target.closest('.zerodiv-grid-btn') || target.closest('.zerodiv-toggle') || target.closest('.zerodiv-tab') || target.closest('#close-zerodiv-overlay') || target.closest('#btn-close-history') || target.closest('#btn-clear-log') || target.closest('label') || target.closest('.key-btn') || target.closest('#steps-overlay') || target.closest('#close-steps-btn') || target.closest('#close-kernel-ui');
+    
+    // Su Desktop manteniamo il blocco aggiungendo i singoli tasti specifici di Formule/Divisori (non l'intero sfondo)
+    return target.closest('button') || 
+           target.closest('input') || 
+           target.closest('select') || 
+           target.closest('.icon-btn') || 
+           target.closest('.var-tab') || 
+           target.closest('.log-entry') || 
+           target.closest('.display-area') || 
+           target.closest('.zerodiv-grid-btn') || 
+           target.closest('.zerodiv-toggle') || 
+           target.closest('.zerodiv-tab') || 
+           target.closest('.formula-btn') || 
+           target.closest('.zerodiv-btn') || 
+           target.closest('.fano-btn') || 
+           target.closest('#close-zerodiv-overlay') || 
+           target.closest('#btn-close-history') || 
+           target.closest('#btn-clear-log') || 
+           target.closest('label') || 
+           target.closest('.key-btn') || 
+           target.closest('#steps-overlay') || 
+           target.closest('#close-steps-btn') || 
+           target.closest('#close-kernel-ui');
 }
 
 // Funzione unificata per iniziare il trascinamento
@@ -790,6 +871,10 @@ window.closureTimer = null;
 window.closureFlashTimers = [];
 
 export const resetView = () => {
+    // Esci se siamo in modalità rotazione (per evitare sovrapposizioni)
+    if (isRotationMode) return;
+    
+    // FIX: Reset indice Fano attivo
     // FIX: Reset indice Fano attivo
     if (typeof setActiveFanoIndex === 'function') setActiveFanoIndex(null);
 

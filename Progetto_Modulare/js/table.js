@@ -1,6 +1,7 @@
 import { pointObjects, sphereMatCenter, sphereMat, tripletVisuals } from './scene.js';
 import { currentAlgState, tripletButtons, resetView } from './main.js';
 import { updateCycleColors, highlightConnections, highlightSingleTriplet } from './graph.js';
+import { isRotationMode, toggleRotationMode } from './rotation.js';
 import { t } from './i18n.js';
 
 // --- FUNZIONI TABELLA ---
@@ -18,6 +19,7 @@ export function formatLatex(str) {
 }
 
 export function activateTripletFromTable(r, c) {
+    if (isRotationMode) toggleRotationMode();
     // RESET UI DIVISORI ZERO
     if (window.resetZeroDivisorUI) window.resetZeroDivisorUI();
 
@@ -46,7 +48,11 @@ export function activateTripletFromTable(r, c) {
     }
 
     // MOSTRA TASTO DOCK
-    document.getElementById('dock-show-all-btn').style.display = 'flex';
+    if (currentAlgState === 3) {
+        document.getElementById('dock-show-all-btn').style.display = 'none';
+    } else {
+        document.getElementById('dock-show-all-btn').style.display = 'flex';
+    }
 
     // 2. Reset Totale Vista 3D
     tripletVisuals.forEach(t => {
@@ -81,6 +87,7 @@ export function activateTripletFromTable(r, c) {
 }
 
 export function updateTableVis() {
+    if (isRotationMode) toggleRotationMode();
     // 0. RESET PREVENTIVO COLORI
     for (let k in pointObjects) {
         const pid = parseInt(k);
@@ -160,15 +167,13 @@ export function buildTable(limitIndex) {
         let html = '<thead><tr><th class="first-col" data-action="reset">&times;</th>';
 
         for (let i = 0; i <= maxDim; i++) {
-            // Usa la traduzione per la componente reale
-            const label = i === 0 ? t('step_real') : "e<sub>" + i + "</sub>";
+            const label = i === 0 ? "1" : "e<sub>" + i + "</sub>";
             html += `<th data-action="col" data-idx="${i}">${label}</th>`;
         }
         html += '</tr></thead><tbody>';
 
         for (let r = 0; r <= maxDim; r++) {
-            // Usa la traduzione per la componente reale
-            const rowLabel = r === 0 ? t('step_real') : "e<sub>" + r + "</sub>";
+            const rowLabel = r === 0 ? "1" : "e<sub>" + r + "</sub>";
             html += `<tr data-idx="${r}"><td class="first-col" data-action="row" data-idx="${r}">${rowLabel}</td>`;
 
             for (let c = 0; c <= maxDim; c++) {
@@ -264,17 +269,3 @@ export function buildTable(limitIndex) {
         }
     }
 }
-
-// Listener per aggiornare la tabella quando cambia la lingua
-window.addEventListener('languageChanged', () => {
-    // Forza la rigenerazione completa dell'HTML della tabella
-    const table = document.getElementById('sedenion-table');
-    if (table) {
-        table.innerHTML = ''; // Svuota la tabella per forzare la ricostruzione
-        buildTable(currentAlgState);
-    }
-    
-    // Aggiorna anche il suggerimento sotto la tabella
-    const tableHint = document.getElementById('table-hint');
-    if (tableHint) tableHint.innerHTML = t('hint_table');
-});

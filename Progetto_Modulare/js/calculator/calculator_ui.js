@@ -85,6 +85,33 @@ export function setupGrid() {
                 }
             }
         });
+        
+        // FIX ALTEZZA CALCOLATRICE MOBILE CON TASTIERA APERTA
+        inputGrid.addEventListener('focusin', (e) => {
+            if (window.innerWidth <= 768 && e.target.classList.contains('num-input')) {
+                const calcModal = document.getElementById('calc-modal');
+                if (calcModal) {
+                    // Blocca l'altezza attuale in pixel prima che il browser la schiacci
+                    const currentHeight = calcModal.offsetHeight;
+                    calcModal.style.height = currentHeight + 'px';
+                    calcModal.style.maxHeight = 'none';
+                    calcModal.style.overflowY = 'auto'; // Permette di scorrere per vedere i tasti coperti
+                }
+            }
+        });
+
+        inputGrid.addEventListener('focusout', (e) => {
+            if (window.innerWidth <= 768 && e.target.classList.contains('num-input')) {
+                const calcModal = document.getElementById('calc-modal');
+                if (calcModal) {
+                    // Ripristina l'altezza dinamica quando la tastiera si chiude
+                    calcModal.style.height = '';
+                    calcModal.style.maxHeight = '';
+                    calcModal.style.overflowY = 'hidden';
+                }
+            }
+        });
+
         inputGrid.setAttribute('data-listener-attached', 'true');
     }
 
@@ -140,9 +167,15 @@ export function updateVarIndicators() {
             indicator.style.display = isDefined ? 'block' : 'none';
         }
 
-        // Aggiorna il testo del tab con la traduzione corrente
+        const tab = document.querySelector(`.var-tab[data-var="${v}"]`);
         if (tab) {
-            tab.innerText = t('var_' + v);
+            if (isDefined) {
+                tab.style.color = '#00ffaa';
+                tab.style.textShadow = '0 0 5px rgba(0, 255, 170, 0.3)';
+            } else {
+                tab.style.color = '';
+                tab.style.textShadow = 'none';
+            }
         }
     });
 }
@@ -199,10 +232,3 @@ document.getElementById('btn-rand-s').addEventListener('click', () => genRandomV
 // Esegue il setup della griglia automaticamente al caricamento del modulo
 setupGrid();
 updateVarIndicators();
-
-window.addEventListener('languageChanged', () => {
-    updateVarIndicators();
-    // Aggiorna anche i placeholder o testi fissi se necessario
-    const exprInput = document.getElementById('expression-display');
-    if (exprInput) exprInput.placeholder = t('ph_expr');
-});

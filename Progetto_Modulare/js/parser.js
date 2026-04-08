@@ -1,4 +1,5 @@
 // === MOTORE MATEMATICO E PARSER ===
+import { t } from './i18n.js';
 
 export const storedVars = {
     a: new Array(16).fill(0), b: new Array(16).fill(0), c: new Array(16).fill(0),
@@ -105,7 +106,7 @@ export function validateAssociativity(exprStr) {
         if (isMono) return;
 
         if (chain.length > 3) {
-            throw `Notazione ambigua: catena di ${chain.length} vettori non nulli senza parentesi.\nUsa le parentesi.`;
+            throw t('err_ambig_chain_1') + chain.length + t('err_ambig_chain_2');
         }
 
         const [A, B, C] = chain;
@@ -129,7 +130,7 @@ export function validateAssociativity(exprStr) {
         }
 
         if (!isValid) {
-            throw `Notazione ambigua per dimensione ${effectiveDimension} (non associativa).\nUsa le parentesi.`;
+            throw t('err_ambig_dim') + effectiveDimension + ".\n" + t('err_ambiguous');
         }
     };
 
@@ -271,7 +272,7 @@ export function evaluateExpression(exprStr, trace = false) {
             }
             if (commCount === 1) tokens[i] = 'comm2';
             else if (commCount === 2) tokens[i] = 'comm3';
-            else throw "Commutatore accetta solo 2 o 3 argomenti";
+            else throw t('err_comm_args');
         }
     }
 
@@ -309,25 +310,25 @@ export function evaluateExpression(exprStr, trace = false) {
                 finalQueue.push(finalStack.pop());
             }
         } else {
-            throw "Token non riconosciuto: " + token;
+            throw t('err_token') + token;
         }
     }
 
-    if (finalQueue.length === 0 && finalStack.length === 0) throw "Espressione vuota o non valida";
+    if (finalQueue.length === 0 && finalStack.length === 0) throw t('err_expr_empty');
     while (finalStack.length > 0) finalQueue.push(finalStack.pop());
 
     const evalStack = [];
-    const getV = (t) => {
-        if (typeof t !== 'string') return t;
-        if (storedVars[t]) return storedVars[t];
-        if (t.startsWith('Ans')) {
-            const idx = parseInt(t.substring(3)) - 1;
-            if (!storedAns[idx]) throw `Risultato ${t} non ancora calcolato.`;
+    const getV = (tParam) => {
+        if (typeof tParam !== 'string') return tParam;
+        if (storedVars[tParam]) return storedVars[tParam];
+        if (tParam.startsWith('Ans')) {
+            const idx = parseInt(tParam.substring(3)) - 1;
+            if (!storedAns[idx]) throw t('err_ans_not_calc') + tParam;
             return storedAns[idx];
         }
-        const num = parseFloat(t);
+        const num = parseFloat(tParam);
         if (!isNaN(num)) { const v = createZeroVector(); v[0] = num; return v; }
-        throw "Simbolo sconosciuto: " + t;
+        throw t('err_unknown_sym') + tParam;
     };
 
     for (let token of finalQueue) {
@@ -359,7 +360,7 @@ export function evaluateExpression(exprStr, trace = false) {
             } else {
                 const b = getV(evalStack.pop());
                 const a = getV(evalStack.pop());
-                if (!a || !b) throw "Errore Sintassi";
+                if (!a || !b) throw t('err_syntax');
                 res = ops[token].fn(a, b);
                 args = [a, b]; opLabel = token;
             }

@@ -1,4 +1,5 @@
 import { resetCalcPosition } from '../main.js';
+import { t } from '../i18n.js';
 
 window.externalCalcWindow = null;
 
@@ -41,7 +42,7 @@ if (popoutCalcBtn) {
 
         window.externalCalcWindow = window.open('', 'CalcWindow', 'width=380,height=550');
         if (!window.externalCalcWindow) {
-            alert("Popup bloccato. Consenti i pop-up per poter separare la calcolatrice.");
+            alert(t('err_popup_blocked'));
             return;
         }
 

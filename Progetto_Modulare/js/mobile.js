@@ -7,7 +7,11 @@ universalCarouselCss.textContent = `
     #carousel-track { position: relative !important; flex: 1 !important; width: 100% !important; overflow: hidden !important; display: grid !important; grid-template-columns: 100% !important; grid-template-rows: 100% !important; touch-action: pan-y !important; }
     .carousel-panel { grid-area: 1 / 1 !important; position: relative !important; width: 100% !important; height: 100% !important; display: flex !important; flex-direction: column !important; padding: 0 5px !important; box-sizing: border-box !important; visibility: visible !important; }
     #carousel-track > * { min-width: 0 !important; overflow-x: hidden !important; }
-    #carousel-track #zerodiv-overlay, #carousel-track #calc-formula-menu { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; right: auto !important; width: 100% !important; height: 100% !important; border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; display: flex !important; z-index: 1 !important; max-height: none !important; transform: none !important; }
+    
+    #carousel-track #zerodiv-overlay, #carousel-track #calc-formula-menu { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; right: auto !important; width: 100% !important; height: 100% !important; border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; display: flex !important; flex-direction: column !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; z-index: 1 !important; max-height: none !important; transform: none !important; overscroll-behavior-y: contain !important; }
+    #carousel-track #formula-container, #carousel-track #zerodiv-content-grid { overflow: visible !important; height: auto !important; flex: none !important; }
+    
+    .formula-btn { flex-shrink: 0 !important; }
     #carousel-track #close-zerodiv-overlay, #carousel-track #zerodiv-overlay > div:first-child { display: none !important; }
     #calc-modal > #zerodiv-overlay, .calc-body > #calc-formula-menu { display: none !important; }
 `;
@@ -200,20 +204,31 @@ const moveCarouselDrag = (x, y, e) => {
     const deltaX = swipeCurrentX - swipeStartX;
     const deltaY = y - swipeStartY;
 
+    // Aumentiamo la soglia iniziale a 8px per capire l'intenzione reale
     if (!swipeDirectionDetermined) {
-        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 5) {
+        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
             swipeDirectionDetermined = true;
-            isHorizontalSwipe = Math.abs(deltaX) * 1.5 > Math.abs(deltaY);
+            isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
         }
     }
 
     if (swipeDirectionDetermined) {
+        // Rompi il blocco se c'è un movimento ampissimo nella direzione opposta (+40px)
+        if (isHorizontalSwipe && Math.abs(deltaY) > Math.abs(deltaX) + 40) {
+            isHorizontalSwipe = false;
+        } else if (!isHorizontalSwipe && Math.abs(deltaX) > Math.abs(deltaY) + 40) {
+            isHorizontalSwipe = true;
+            // Riazzera il punto di partenza per evitare un salto grafico improvviso
+            swipeStartX = x;
+            swipeStartY = y;
+        }
+
         if (isHorizontalSwipe) {
-            if (e && e.cancelable) e.preventDefault();
-            window.updateCarouselPositions(deltaX, false);
+            if (e && e.cancelable) e.preventDefault(); // Blocca scroll nativo verticale della pagina
+            window.updateCarouselPositions(swipeCurrentX - swipeStartX, false);
         } else {
-            isSwipingCarousel = false;
-            window.updateCarouselPositions(0, true);
+            // Movimento verticale: impediamo al carosello di muoversi orizzontalmente
+            window.updateCarouselPositions(0, false);
         }
     }
 };
@@ -222,7 +237,10 @@ const endCarouselDrag = () => {
     if (!isSwipingCarousel) return;
     isSwipingCarousel = false;
 
-    if (swipeDirectionDetermined && !isHorizontalSwipe) return;
+    if (swipeDirectionDetermined && !isHorizontalSwipe) {
+        window.updateCarouselPositions(0, true); // Assicura che la UI torni allineata
+        return;
+    }
 
     const delta = swipeCurrentX - swipeStartX;
     const trackWidth = document.getElementById('carousel-track').offsetWidth || 300;
@@ -248,10 +266,15 @@ const calcModal = document.getElementById('calc-modal');
 if (calcModal) {
     calcModal.addEventListener('touchstart', e => {
         if (e.touches.length !== 1 || !isValidDragTarget(e.target)) return;
+        
         startCarouselDrag(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
     calcModal.addEventListener('mousedown', e => {
+        // FIX PC: Disabilita lo swipe/scrolling delle pagine col mouse su Desktop.
+        // In questo modo il clic e trascinamento serve SOLO per spostare la finestra!
+        if (window.innerWidth > 768) return; 
+        
         if (!isValidDragTarget(e.target)) return;
         startCarouselDrag(e.clientX, e.clientY);
     });

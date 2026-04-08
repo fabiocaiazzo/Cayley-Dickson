@@ -1,5 +1,6 @@
 import { storedVars } from '../parser.js';
 import { currentVar, setGrid, updateVarIndicators } from './calculator_ui.js';
+import { t } from '../i18n.js';
 
 // --- RISOLUTORE DEL KERNEL (ANNICHILATORI DI A) CON UI INTERATTIVA ---
 let currentKernelBasis = []; // Variabile globale per memorizzare la base corrente
@@ -29,7 +30,7 @@ window.saveKernelToVar = function (varName) {
 window.openKernelUI = function (A, originalExpr = 'a') {
     // Si aspetta che vecNormSq, vecMul e formatVecGlobal siano accessibili globalmente 
     if (typeof vecNormSq !== 'undefined' && vecNormSq(A) < 1e-9) {
-        alert("L'espressione è nulla. Qualsiasi vettore annulla lo zero.");
+        alert(t('err_null_expr'));
         return;
     }
 
@@ -132,7 +133,7 @@ window.openKernelUI = function (A, originalExpr = 'a') {
 
     if (basis.length === 0) {
         inputsContainer.innerHTML = '';
-        formulaLbl.innerHTML = "Il sedenione non è un divisore dello zero. Il Kernel è vuoto (solo vettore nullo).";
+        formulaLbl.innerHTML = t('kn_empty');
         document.getElementById('kernel-result-display').innerHTML = "0";
     } else {
         currentKernelBasis = basis; // Salva globalmente

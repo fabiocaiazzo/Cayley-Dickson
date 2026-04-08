@@ -1,5 +1,6 @@
 import { storedVars, storedAns, evaluateExpression, validateAssociativity } from '../parser.js';
 import { currentVar, saveVar, setGrid, updateVarIndicators } from './calculator_ui.js';
+import { t } from '../i18n.js';
 
 const exprDisplay = document.getElementById('expression-display');
 
@@ -99,19 +100,19 @@ window.calculateRealTime = function () {
         try {
             const kerMatch = val.match(/^\s*ker\((.*)\)\s*$/i);
             if (!kerMatch) {
-                resDisp.innerHTML = "Sintassi errata. Usa solo Ker(...)";
+                resDisp.innerHTML = t('err_syn_ker');
                 resDisp.style.color = "#ffaa00";
                 return null;
             }
             let inner = kerMatch[1].trim();
             if (!inner) {
-                resDisp.innerHTML = "Attesa espressione...";
+                resDisp.innerHTML = t('msg_await_expr');
                 resDisp.style.color = "#aaa";
                 return null;
             }
             let expr = window.preprocessExpr(inner);
             evaluateExpression(expr, false);
-            resDisp.innerHTML = "Premi = per calcolare il nucleo";
+            resDisp.innerHTML = t('msg_press_eq_ker');
             resDisp.style.color = "#00ffaa";
             return null;
         } catch (e) {
@@ -126,7 +127,7 @@ window.calculateRealTime = function () {
     const closeP = (checkVal.match(/\)/g) || []).length;
 
     if (openP !== closeP) {
-        resDisp.innerHTML = "Parentesi non bilanciate";
+        resDisp.innerHTML = t('err_unbal_paren');
         resDisp.style.color = "#ffaa00"; 
         return null;
     }
@@ -147,27 +148,27 @@ window.calculateRealTime = function () {
         let msg = "Err";
         let color = "#ff5555"; 
 
-        if (errStr.includes("Divisione per zero")) {
-            msg = "Divisione per 0";
+        if (errStr.includes("Division") || errStr.includes("Divisione")) {
+            msg = t('err_div_zero');
         }
-        else if (errStr.includes("esponente deve essere un numero reale")) {
-            msg = "Esponente reale richiesto";
+        else if (errStr.includes("reale") || errStr.includes("Real")) {
+            msg = t('err_exp_real');
             color = "#ffaa00"; 
         }
-        else if (errStr.includes("esponente deve essere un intero")) {
-            msg = "Esponente intero richiesto";
+        else if (errStr.includes("intero") || errStr.includes("Integer")) {
+            msg = t('err_exp_int');
             color = "#ffaa00"; 
         }
-        else if (errStr.includes("Notazione ambigua") || errStr.includes("non è associativa")) {
-            msg = "Ambiguo, usa le parentesi";
+        else if (errStr.includes("ambigua") || errStr.includes("associativa") || errStr.includes("Ambiguous")) {
+            msg = t('err_ambiguous');
             color = "#ffaa00"; 
         }
-        else if (errStr.includes("Sintassi") || errStr.includes("Token") || errStr.includes("Simbolo")) {
+        else if (errStr.includes("Sintassi") || errStr.includes("Token") || errStr.includes("Simbolo") || errStr.includes("Syntax") || errStr.includes("Unknown")) {
             msg = "...";
             color = "#666"; 
         }
         else {
-            msg = "Errore Calcolo";
+            msg = t('err_calc');
         }
 
         resDisp.innerHTML = msg;
@@ -232,16 +233,16 @@ window.calcAction = function (action) {
         if (val.toLowerCase().includes('ker(')) {
             try {
                 const kerMatch = val.match(/^\s*ker\((.*)\)\s*$/i);
-                if (!kerMatch) throw "Sintassi errata. Usa solo Ker(...)";
+                if (!kerMatch) throw t('err_syn_ker');
                 let inner = kerMatch[1].trim();
-                if (!inner) throw "Espressione vuota";
+                if (!inner) throw t('err_expr_empty');
 
                 window.randCacheIndex = 0;
                 let expr = window.preprocessExpr(inner);
 
                 const resVector = evaluateExpression(expr);
                 if(typeof window.openKernelUI === 'function') window.openKernelUI(resVector, inner);
-                resDisp.innerHTML = `Nucleo calcolato`;
+                resDisp.innerHTML = t('msg_ker_calc');
                 window.randCache = []; 
             } catch (e) { resDisp.innerHTML = "Err"; resDisp.style.color = "#f55"; }
             return;
@@ -259,10 +260,17 @@ window.calcAction = function (action) {
                 if (currentVar === targetAssign) setGrid(res);
                 updateVarIndicators();
 
+                // 1. Svuota l'input e resetta lo stato del motore real-time
+                disp.value = '';
+                disp.dispatchEvent(new Event('input')); 
+
+                // 2. Visualizza il risultato dell'assegnazione DOPO il reset
                 const resString = window.formatVecGlobal(res);
                 resDisp.innerHTML = `<b>${targetAssign}</b> = ${resString}`;
+                resDisp.style.color = "#0f0"; // Forza il colore verde successo
+                
                 window.randCache = []; 
-            } catch (e) { alert("Errore assegnazione: " + e); }
+            } catch (e) { alert(t('err_assign') + e); }
             return;
         }
 
@@ -314,7 +322,7 @@ const btnClearLog = document.getElementById('btn-clear-log');
 if (btnClearLog) {
     btnClearLog.addEventListener('click', () => {
         const log = document.getElementById('calc-log');
-        if(log) log.innerHTML = '<div style="text-align:center; color:#555; margin-top:20px; font-size:12px;">Nessun calcolo recente</div>';
+        if(log) log.innerHTML = `<div style="text-align:center; color:#555; margin-top:20px; font-size:12px;">${t('msg_no_calc')}</div>`;
         storedAns.length = 0; 
     });
 }

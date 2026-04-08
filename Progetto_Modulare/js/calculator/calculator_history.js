@@ -1,3 +1,5 @@
+import { t } from '../i18n.js';
+
 export const historyOverlay = document.getElementById('history-overlay');
 export const toggleHistoryBtn = document.getElementById('toggle-history-btn');
 
@@ -9,7 +11,7 @@ export function closeHistory() {
         historyOverlay.classList.remove('open');
         toggleHistoryBtn.classList.remove('active');
         toggleHistoryBtn.innerHTML = iconClockSVG;
-        toggleHistoryBtn.title = "Cronologia";
+        toggleHistoryBtn.title = t('tt_history');
     }
 }
 
@@ -22,7 +24,7 @@ if (toggleHistoryBtn) {
             historyOverlay.classList.add('open');
             toggleHistoryBtn.classList.add('active');
             toggleHistoryBtn.innerHTML = iconCalcSVG;
-            toggleHistoryBtn.title = "Torna al calcolo";
+            toggleHistoryBtn.title = t('tt_back_calc');
         }
     });
 }

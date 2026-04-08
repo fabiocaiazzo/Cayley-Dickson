@@ -501,11 +501,24 @@
     text-align: right;
     height: 40px;
     overflow-y: auto;
+    /* Proprietà standard (Firefox) */
     scrollbar-width: thin;
     scrollbar-color: #00aa66 transparent;
     white-space: normal;
-    word-break: normal; /* Usa le regole standard di default a capo, no taglio parole */
+    word-break: break-all; /* Fondamentale per i vettori lunghi senza spazi */
     line-height: 1.2;
+}
+
+/* Stile scrollbar per browser Webkit (Chrome, Safari, iOS, Android) */
+#result-display::-webkit-scrollbar {
+    width: 4px;
+}
+#result-display::-webkit-scrollbar-track {
+    background: transparent;
+}
+#result-display::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 170, 0.4); /* Verde semitrasparente coordinato al testo */
+    border-radius: 10px;
 }
 
 
@@ -563,6 +576,14 @@
     border-radius: 4px;
     transition: all 0.2s;
     position: relative;
+}
+
+/* Impedisce la selezione delle etichette (1, e1, e2...) nella griglia input */
+.input-group span, 
+.input-group label {
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none; /* Rende le etichette "trasparenti" ai tocchi */
 }
 
 /* Effetto focus sugli input */
@@ -942,4 +963,13 @@
     font-size: 11px;
     color: white;
     margin-right: 5px;
+}
+
+/* --- FIX MOBILE: Evita lo schiacciamento della calcolatrice con la tastiera aperta --- */
+@media (max-width: 768px) {
+    #calc-modal {
+        height: 520px !important; /* Mantiene rigorosamente la sua altezza originale */
+        max-height: none !important; /* Ignora eventuali limiti imposti dal viewport ristretto */
+        bottom: auto !important; /* Sgancia il modale dal fondo per evitare che la tastiera lo spinga su */
+    }
 }

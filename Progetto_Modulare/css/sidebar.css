@@ -143,8 +143,8 @@
             /* Abbassato per non coprire H/O/S */
             bottom: auto !important;
             /* Sganciamo il fondo */
-            /* Fissiamo l'altezza in modo che non copra mai dock e top bar */
-            height: calc(100dvh - 230px) !important;
+            /* FIX: Usiamo svh invece di dvh per evitare il ridimensionamento con la tastiera */
+            height: calc(100svh - 230px) !important;
             /* Ricalibrato in base al nuovo top */
 
             /* --- ASSE ORIZZONTALE (Fisso/Centrato) --- */
@@ -435,4 +435,11 @@
     position: relative;
     top: 0.3em;
     margin-left: 1px;
+}
+
+/* --- FIX: Spazio inferiore extra per la dock ESCLUSIVO per i 32-ioni --- */
+#buttons-container-32,
+#fano-grid-32,
+#pg32-grid-32 {
+    padding-bottom: 100px !important; /* Aggiunge spazio vuoto alla fine dello scroll per superare l'altezza della dock */
 }

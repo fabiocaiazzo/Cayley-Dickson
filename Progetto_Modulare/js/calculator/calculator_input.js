@@ -78,7 +78,6 @@ let evalPressTimer = null;
 let evalPopupOpen = false;
 
 window.startEvalPress = function (e) {
-    e.preventDefault();
     if (window.isShiftActive) {
         window.handleKey('=');
         return;
@@ -120,7 +119,6 @@ let varPressTimer = null;
 let varPressHandled = false;
 
 window.startVarPress = function (e, key) {
-    e.preventDefault();
     varPressHandled = false;
     varPressTimer = setTimeout(() => {
         varPressHandled = true;
@@ -136,21 +134,24 @@ window.startVarPress = function (e, key) {
 window.endVarPress = function (e, key) {
     e.preventDefault();
     if (varPressTimer) { clearTimeout(varPressTimer); varPressTimer = null; }
+    
     // Se non è scattato il tocco lungo, comportati come tocco singolo
-    if (!varPressHandled) window.handleKey(key);
+    if (!varPressHandled) {
+        varPressHandled = true; // Previene doppie esecuzioni
+        window.handleKey(key);
+    }
 };
 
 window.cancelVarPress = function (e) {
     if (varPressTimer) { clearTimeout(varPressTimer); varPressTimer = null; }
-    varPressHandled = true; // Impedisce glitch se scivola il dito ai bordi
+    // Rimossa la forzatura di varPressHandled = true. 
+    // Ora i micro-movimenti del dito su mobile non annulleranno più un tap intenzionale.
 };
 
 let cancPressTimer = null;
 let cancPressHandled = false;
 
 window.startCancPress = function (e) {
-    e.preventDefault();
-    // Se Shift è attivo, il tasto Canc agisce sempre e instantaneamente come AC
     if (window.isShiftActive) {
         window.handleKey('canc');
         return; 
@@ -165,12 +166,14 @@ window.startCancPress = function (e) {
 window.endCancPress = function (e) {
     e.preventDefault();
     if (cancPressTimer) { clearTimeout(cancPressTimer); cancPressTimer = null; }
-    if (!cancPressHandled && !window.isShiftActive) window.handleKey('canc');
+    if (!cancPressHandled && !window.isShiftActive) {
+        cancPressHandled = true;
+        window.handleKey('canc');
+    }
 };
 
 window.cancelCancPress = function (e) {
     if (cancPressTimer) { clearTimeout(cancPressTimer); cancPressTimer = null; }
-    cancPressHandled = true; 
 };
 
 

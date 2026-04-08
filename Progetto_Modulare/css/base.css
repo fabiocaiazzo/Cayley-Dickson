@@ -11,9 +11,7 @@
             display: flex;
             width: 100vw;
             height: 100vh;
-            /* Fallback per browser molto vecchi */
             height: 100dvh;
-            /* Adatta l'altezza dinamicamente alle barre del browser */
             overflow: hidden;
             position: relative;
         }
@@ -106,7 +104,6 @@
             font-weight: bold;
             font-size: 14px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* Effetto rimbalzo */
         }
 
         .alg-dot:hover {
@@ -120,7 +117,6 @@
             background: #00aaff;
             border-color: #0088ff;
             color: #001a33;
-            /* Testo scuro su sfondo luminoso */
             box-shadow: 0 0 10px #00aaff;
             transform: scale(1.15);
         }
@@ -141,7 +137,6 @@
             #alg-dots-list {
                 position: absolute;
                 top: 45px;
-                /* Sotto il bottone */
                 left: -5px;
                 flex-direction: column;
                 background: rgba(10, 15, 20, 0.95);
@@ -356,6 +351,30 @@
 
         /* --- FIX CAROUSEL MOBILE --- */
         @media (max-width: 768px) {
+            /* Rimuove il rettangolo blu su pulsanti e disabilita selezione su etichette input */
+            #mobile-swipe-nav span, 
+            #mobile-swipe-nav label,
+            .input-group span,
+            .input-group label,
+            .key-btn,
+            .ui-btn,
+            .menu-btn,
+            .tab-btn,
+            .var-tab,
+            .view-tab-btn,
+            .icon-btn,
+            .calc-action-btn,
+            .formula-btn,
+            .zerodiv-grid-btn,
+            .log-entry,
+            .help-nav-btn {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                user-select: none;
+                -webkit-user-select: none;
+                outline: none;
+            }
+
             #carousel-track {
                 position: relative;
                 flex: 1;
@@ -428,5 +447,27 @@
             #calc-modal>#zerodiv-overlay,
             .calc-body>#calc-formula-menu {
                 display: none !important;
+            }
+
+            /* FIX: Permette lo scorrimento verticale su tutto lo sfondo di Divisori e Formule */
+            #carousel-track #zerodiv-overlay,
+            #carousel-track #calc-formula-menu {
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch; /* Rende lo scroll fluido su iOS */
+                touch-action: pan-y !important;
+            }
+
+            /* Disabilita lo scroll interno alla griglia per evitare conflitti con il genitore */
+            #carousel-track #zerodiv-content-grid {
+                overflow-y: visible !important;
+                height: auto !important;
+                flex: none !important;
+            }
+            
+            /* Assicura che il contenitore delle formule prenda tutta l'altezza per scorrere correttamente */
+            #carousel-track #calc-formula-menu {
+                display: flex !important;
+                height: 100% !important;
+                max-height: none !important;
             }
         }

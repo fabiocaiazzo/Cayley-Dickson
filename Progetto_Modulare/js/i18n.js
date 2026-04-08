@@ -1,12 +1,16 @@
 import it from './lang/it.js';
 import en from './lang/en.js';
+import fr from './lang/fr.js';
+import de from './lang/de.js';
+import es from './lang/es.js';
+import pt from './lang/pt.js';
 
-const dictionaries = { it, en };
+const dictionaries = { it, en, fr, de, es, pt };
 
 // Recupera la lingua salvata, altrimenti usa l'italiano di default
 let currentLang = localStorage.getItem('app_lang') || 'it';
 
-// Funzione per tradurre usna chiave specifica (la useremo poi nei file JS)
+// Funzione per tradurre una chiave specifica (la useremo poi nei file JS)
 export function t(key) {
     return dictionaries[currentLang][key] || key;
 }

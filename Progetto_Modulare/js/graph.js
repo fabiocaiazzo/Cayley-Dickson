@@ -5,6 +5,7 @@ import {
 } from './scene.js';
 import { currentAlgState, tripletButtons, fanoButtons, forceUpdate, resetView } from './main.js';
 import { buildTable, tableState } from './table.js';
+import { isRotationMode, toggleRotationMode } from './rotation.js';
 import { t } from './i18n.js';
 
 // --- GESTIONE COLORI TERNE (Tema Geometrico Fisso) ---
@@ -44,6 +45,7 @@ export function updateCycleColors() {
 }
 
 export function visualizeTripletByIndex(idx) {
+    if (isRotationMode) toggleRotationMode();
     if (window.resetZeroDivisorUI) window.resetZeroDivisorUI();
 
     for (let k in pointObjects) {
@@ -70,7 +72,15 @@ export function visualizeTripletByIndex(idx) {
         return;
     }
 
-    document.getElementById('dock-show-all-btn').style.display = 'flex';
+    let maxTriplets = 35;
+    if (currentAlgState === 3) maxTriplets = 1;
+    if (currentAlgState === 7) maxTriplets = 7;
+
+    if (activeIndices.length >= maxTriplets) {
+        document.getElementById('dock-show-all-btn').style.display = 'none';
+    } else {
+        document.getElementById('dock-show-all-btn').style.display = 'flex';
+    }
 
     tripletVisuals.forEach(t => {
         t.mesh.visible = false;
@@ -120,7 +130,9 @@ export function animateCameraToDefault() {
 }
 
 export function animateCameraToFanoPlane(planeIdx) {
-    const DIST = 24;
+    const zoomedOutPlanes = [0, 3, 5, 6, 7, 9, 10, 11, 13, 14];
+    const isMobile = window.innerWidth <= 768;
+    const DIST = (isMobile && zoomedOutPlanes.includes(planeIdx)) ? 38 : 24;
     let camPos, camTarget;
 
     const CONES = {
@@ -192,6 +204,7 @@ export function animateCameraToFanoPlane(planeIdx) {
 }
 
 export function visualizeFanoPlane(planeIdx, fromCalculator = false) {
+    if (isRotationMode) toggleRotationMode();
     if (!fromCalculator && window.resetZeroDivisorUI) window.resetZeroDivisorUI();
 
     activeFanoIndex = planeIdx;
@@ -308,7 +321,11 @@ export function highlightConnections(pointId) {
 }
 
 export function highlightSingleTriplet(tripletIdx) {
-    document.getElementById('dock-show-all-btn').style.display = 'flex';
+    if (currentAlgState === 3) {
+        document.getElementById('dock-show-all-btn').style.display = 'none';
+    } else {
+        document.getElementById('dock-show-all-btn').style.display = 'flex';
+    }
 
     tripletVisuals.forEach(t => {
         t.mesh.visible = false;

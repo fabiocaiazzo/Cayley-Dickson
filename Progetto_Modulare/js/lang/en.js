@@ -3,15 +3,15 @@ export default {
     "app_title": "Calculator",
     "app_subtitle": "Algebraic",
     
-    // Menu Impostazioni
+    // Settings Menu
     "settings_title": "Settings",
     "speed": "Speed",
     "opacity": "Opacity",
-    "theme_label": "Theme: ",
+    "theme_label": "Theme",
     "grid_on": "Grid: ON",
     "grid_off": "Grid: OFF",
     
-    // Nomi dei temi
+    // Theme Names
     "theme_0": "Slate Mist",
     "theme_1": "Cyber Gradient",
     "theme_2": "Blueprint",
@@ -37,7 +37,7 @@ export default {
     "calc_help_title": "Calculator Guide",
     "zerodiv_title": "Zero Divisors",
 
-    // Tooltip e Placeholder
+    // Tooltips and Placeholders
     "tt_history": "History",
     "tt_popout": "Open in new window",
     "tt_vars": "Define Variables",
@@ -56,7 +56,7 @@ export default {
     "swipe_zerodiv": "Zero Divisors &raquo;",
     "tab_formulas": "Formulas &#9652;",
     
-    // Modale Divisori dello Zero
+    // Zero Divisors Modal
     "zd_h1": "Graphical representation of zero divisors",
     "zd_desc1": "The table lists the 84 zero divisors of the sedenions, namely:",
     "zd_desc2": "Where indices <b>a</b> and <b>c</b> are less than 8, while indices <b>b</b> and <b>d</b> are greater than 8.",
@@ -116,7 +116,8 @@ export default {
     "c_p1_t": "1. Variables and Input",
     "c_p1_l1": "<b>Variables (a, b, c, d):</b> Store 16-component vectors (Sedenions). Selectable via tabs above the grid.",
     "c_p1_l2": "<b>Input Grid:</b> Values of the active algebra are white, others are gray, but all are editable.",
-    "c_p1_l3": "<b>Random Numbers:</b>",
+    "c_p1_l3_t": "<b>Random Numbers:</b>",
+    "c_p1_l3_1": "Use the Rand key to generate random vectors based on the selected algebra.",
     
     "c_p2_t": "2. Numeric Keys and Basic Operators",
     "c_p2_l1": "<b>Numbers:</b> <code>0-9</code> to input numeric digits.",
@@ -187,6 +188,7 @@ export default {
     "step_sum": "Sum:",
     "step_total": "Total:",
     "step_pass": "Step",
+    "step_group": "Group",
     "step_err_cmp": "Step-by-step is not available for comparison operations (==, =?).<br>Calculate the expressions individually to see their steps.",
     "step_err_no_step": "No intermediate steps available.<br>The result is a direct or immediate value.",
     "step_formula": "Formula:",
@@ -228,5 +230,44 @@ export default {
     "var_a": "Var A",
     "var_b": "Var B",
     "var_c": "Var C",
-    "var_d": "Var D"
+    "var_d": "Var D",
+
+    "tt_back_calc": "Back to calculation",
+    "err_null_expr": "The expression is null. Any vector annihilates zero.",
+    "kn_empty": "The sedenion is not a zero divisor. The Kernel is empty (only the null vector).",
+    "err_popup_blocked": "Popup blocked. Allow pop-ups to detach the calculator.",
+    "err_syn_ker": "Syntax error. Use only Ker(...)",
+    "msg_await_expr": "Waiting for expression...",
+    "msg_press_eq_ker": "Press = to calculate the Kernel",
+    "err_unbal_paren": "Unbalanced parentheses",
+    "err_div_zero": "Division by 0",
+    "err_exp_real": "Real exponent required",
+    "err_exp_int": "Integer exponent required",
+    "err_ambiguous": "Ambiguous, use parentheses",
+    "err_calc": "Calculation Error",
+    "msg_ker_calc": "Kernel calculated",
+    "err_assign": "Assignment error: ",
+    "msg_no_calc": "No recent calculations",
+    "err_ambig_chain_1": "Ambiguous notation: chain of ",
+    "err_ambig_chain_2": " non-null vectors without parentheses.\nUse parentheses.",
+    "err_ambig_dim": "Ambiguous notation for dimension ",
+    "err_comm_args": "Commutator accepts only 2 or 3 arguments",
+    "err_token": "Unrecognized token: ",
+    "err_expr_empty": "Empty or invalid expression",
+    "err_ans_not_calc": "Result not yet calculated: ",
+    "err_unknown_sym": "Unknown symbol: ",
+    "err_syntax": "Syntax Error",
+
+    // 3D Rotation Modal
+    "dt_rotation": "3D Rotation",
+    "rot_title": "Rotation Quaternion",
+    "rot_axis_x": "AXIS X",
+    "rot_axis_y": "AXIS Y",
+    "rot_axis_z": "AXIS Z",
+    "rot_angle": "ANGLE (&deg;):",
+    "rot_quat": "QUATERNION (a + bi + cj + dk)",
+    "rot_conv_title": "Quaternion Conversion",
+    "rot_conv_p1": "Given a normalized rotation axis <b style=\"color:#aaa;\">(x, y, z)</b> and an angle <b style=\"color:#00ffaa;\">&theta;</b>, the rotation quaternion <b>q = a + bi + cj + dk</b> is:<br><br>",
+    "rot_conv_p2": "The inverse conversion (from quaternion to axis/angle) is:<br><br>",
+    "rot_conv_note": "Note: quaternions manually entered in the bar are automatically normalized (q/|q|) to always generate geometrically valid rotations."
 };
