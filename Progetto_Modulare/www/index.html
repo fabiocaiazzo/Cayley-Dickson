@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cayley-Dickson v2026.04.20</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dock.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/calc/calc-layout.css">
+    <link rel="stylesheet" href="css/calc/calc-display.css">
+    <link rel="stylesheet" href="css/calc/calc-keypad.css">
+    <link rel="stylesheet" href="css/calc/calc-history.css">
+    <link rel="stylesheet" href="css/calc/calc-menu.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "./js/three/three.module.js",
+            "three/addons/": "./js/three/addons/"
+        }
+    }
+</script>
+</head>
+
+<body ontouchstart="">
+
+    <div id="help-modal">
+        <div class="help-container">
+            <div class="help-header">
+                <strong data-i18n="help_title">Guida all'uso</strong>
+                <div id="close-help-btn" class="icon-btn" style="font-size:20px;">&times;</div>
+            </div>
+            <div class="help-content">
+                <div class="help-page active" data-page="0">
+                    <h3 data-i18n="h_p1_t" style="color:#00aaff; margin-top:0;">1. Panoramica</h3>
+                    <p data-i18n="h_p1_d">Progetto ideato da <strong>Fabio Caiazzo</strong>. Visualizzatore interattivo per <strong>Quaternioni (&#x210D;)</strong>, <strong>Ottetti (&#x1D546;)</strong> e <strong>Sedenioni (&#x1D54A;)</strong>.</p>
+                    <ul style="padding-left:20px;">
+                        <li data-i18n="h_p1_l1"><strong>Grafico 3D:</strong> Rappresenta la struttura moltiplicativa. Clicca sulle sfere o usa la tabella per isolare le sotto-algebre.</li>
+                        <li data-i18n="h_p1_l2"><strong>Neon & Colori:</strong> Le luci viaggiano indicando la direzione positiva del prodotto (es: e1&rarr;e2 &rarr; e3 vuol dire e1*e2=e3).</li>
+                        <li data-i18n="h_p1_l3"><strong>Tasto &#x1D54A; (Algebra):</strong> Cambia la visualizzazione tra le 3 algebre (la calcolatrice lavora sempre sui Sedenioni).</li>
+                        <li style="display:list-item;"><strong>Impostazioni (<svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor; vertical-align:middle; margin-bottom:2px;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07-.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" /></svg>):</strong> Sfondi, Griglia, Velocità animazione e Opacità.</li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="1">
+                    <h3 data-i18n="h_p2_t" style="color:#00aaff; margin-top:0;">2. Calcolatrice: Input e Variabili</h3>
+                    <p data-i18n="h_p2_d">La calcolatrice opera sempre su <strong>16 componenti</strong> (Sedenioni), indipendentemente dalla vista 3D.</p>
+                    <ul style="padding-left:20px;">
+                        <li data-i18n="h_p2_l1"><strong>Variabili (a, b, c, d):</strong> Memorizza vettori complessi. Usa i tab sopra la griglia per selezionarle.</li>
+                        <li data-i18n="h_p2_l2"><strong>Input Griglia:</strong> I valori attivi (in base all'algebra selezionata) sono bianchi, gli altri grigi, ma tutti modificabili.</li>
+                        <li><span data-i18n="h_p2_l3_t"><strong>Generazione Random:</strong></span>
+                            <ul>
+                                <li data-i18n="h_p2_l3_1"><code>Rand &#x210D;</code>: Genera Quaternione (indici 0-3).</li>
+                                <li data-i18n="h_p2_l3_2"><code>Rand &#x1D546;</code>: Genera Ottetto (indici 0-7).</li>
+                                <li data-i18n="h_p2_l3_3"><code>Rand &#x1D54A;</code>: Genera Sedenione completo (0-15).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="2">
+                    <h3 data-i18n="h_p3_t" style="color:#00aaff; margin-top:0;">3. Calcolatrice: Operazioni Avanzate</h3>
+                    <ul style="padding-left:20px; margin-bottom:10px;">
+                        <li data-i18n="h_p3_l1"><strong>Sintassi:</strong> <code>inv(a)</code>, <code>norm(a)</code>, <code>[a,b]</code> (commutatore), <code>[a,b,c]</code> (associatore), <code>e_(n)</code> (unità base).</li>
+                        <li data-i18n="h_p3_l2"><strong>Passaggi (Tasto Lista):</strong> Clicca l'icona blu a destra di "=" per vedere il calcolo Step-by-Step dettagliato.</li>
+                        <li data-i18n="h_p3_l3"><strong>Formule Rapide:</strong> Menu a tendina per un formulario che inserisce esempi notevoli (es. non-associatività).</li>
+                        <li data-i18n="h_p3_l4"><strong>Confronto:</strong> Usa <code>==</code> o <code>=?</code> per verificare uguaglianze (es: <code>[a,b] =? 0</code>).</li>
+                        <li data-i18n="h_p3_l5"><strong>Assegnazione:</strong> Usa <code>=</code> per assegnare un valore alle variabili (es: <code>a=5</code>).</li>
+                        <li data-i18n="h_p3_l6"><strong>Apertura diretta:</strong> Cliccando un qualunque numero o lettera da tastiera, è possibile aprire direttamente la calcolatrice.</li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="3">
+                    <h3 data-i18n="h_p4_t" style="color:#00aaff; margin-top:0;">4. Divisori dello Zero</h3>
+                    <p data-i18n="h_p4_d">Clicca il tasto rosso <code>a&middot;b=0</code> nella calcolatrice.</p>
+                    <ul style="padding-left:20px;">
+                        <li data-i18n="h_p4_l1"><strong>Visualizzazione 3D:</strong> Cliccando una coppia divisore, il grafico si aggiorna per mostrare il <strong>Piano di Fano</strong> o il <strong>Fulcro</strong> coinvolto.</li>
+                        <li><span data-i18n="h_p4_l2_t"><strong>Codice Colori 3D:</strong></span>
+                            <ul>
+                                <li data-i18n="h_p4_l2_1"><span style="color:#0088ff">Blu</span>: Ciclo nell'algebra degli ottetti.</li>
+                                <li data-i18n="h_p4_l2_2"><span style="color:#ffdd00">Giallo</span>: Nodo "Fulcro" comune (indice > 7).</li>
+                                <li data-i18n="h_p4_l2_3"><span style="color:#00ff00">Verde</span> / <span style="color:#ff0000">Rosso</span>: Indica il verso di percorrenza dal nodo blu verso il fulcro.</li>
+                            </ul>
+                        </li>
+                        <li data-i18n="h_p4_l3"><strong>Auto-Calcolo:</strong> Cliccando una coppia, le variabili A e B vengono impostate automaticamente per dimostrare il prodotto nullo.</li>
+                    </ul>
+                </div>
+
+                <div class="help-page" data-page="4">
+                    <h3 data-i18n="h_p5_t" style="color:#00aaff; margin-top:0;">5. Tabelle e Piani di Fano</h3>
+                    <p>Pannello laterale (apri con <span class="help-icon-inline" style="display:inline-flex; align-items:center; transform:translateY(2px);"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;"><path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z" /></svg></span>), oppure trascina la linguetta blu:</p>
+                    <ul style="padding-left:20px;">
+                        <li data-i18n="h_p5_l1"><strong>Terne:</strong> Clicca per isolare una singola terna nel grafico 3D.</li>
+                        <li data-i18n="h_p5_l2"><strong>Piani di Fano:</strong> Sotto al grafico terne, trovi i 15 piani di Fano. Cliccali per evidenziare le 7 terne che formano una sotto-algebra chiusa.</li>
+                        <li><span data-i18n="h_p5_l3_t"><strong>Tabella Moltiplicativa:</strong></span>
+                            <ul>
+                                <li data-i18n="h_p5_l3_1">Clic Intestazioni: Isola tutte le terne connesse a quell'unità.</li>
+                                <li data-i18n="h_p5_l3_2">Clic Cella interna: Isola la terna specifica 3D relativa al prodotto.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-footer">
+                <button id="help-prev-btn" class="help-nav-btn" data-i18n="btn_prev">&lt; Indietro</button>
+                <div class="help-indicators">
+                    <div class="help-dot active"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                    <div class="help-dot"></div>
+                </div>
+                <button id="help-next-btn" class="help-nav-btn" data-i18n="btn_next">Avanti &gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-modal">
+        <div id="history-overlay">
+            <div class="history-header">
+                <strong data-i18n="history_title">Cronologia Risultati</strong>
+                <div class="history-actions">
+                    <span id="btn-clear-log" class="history-clear-btn">
+                        <svg viewBox="0 0 24 24" class="icon-sm"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg> <span data-i18n="btn_clear_log">Pulisci</span>
+                    </span>
+                    <span id="btn-close-history" class="history-close-btn" title="Chiudi" data-i18n-title="btn_close">&times;</span>
+                </div>
+            </div>
+            <div id="calc-log">
+                <div data-i18n="history_empty" class="history-empty-msg">Nessun calcolo recente</div>
+            </div>
+        </div>
+
+        <div id="steps-overlay" class="overlay-steps">
+            <div class="overlay-steps-header">
+                <strong data-i18n="steps_title">Passaggi Calcolo</strong>
+                <span id="close-steps-btn" class="close-icon-btn white">&times;</span>
+            </div>
+            <div id="steps-content" class="steps-content-area"></div>
+        </div>
+
+        <div id="kernel-overlay" class="overlay-kernel">
+            <div class="overlay-kernel-header">
+                <span data-i18n="kernel_title">Spazio Nullo (Kernel)</span>
+                <span id="close-kernel-ui" class="close-icon-btn">&times;</span>
+            </div>
+            <div class="kernel-body">
+                <div id="kernel-formula-display" class="kernel-formula">
+                    v = q<sub>1</sub>t<sub>1</sub> + ...
+                </div>
+                <div id="kernel-inputs-container" class="kernel-inputs-grid">
+                </div>
+                <div class="kernel-result-box">
+                    <div class="kernel-result-header">
+                        <div data-i18n="kn_generated" class="kernel-result-title">Vettore Generato</div>
+                        <div class="kernel-save-group">
+                            <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:#00aaff;" title="Salva in" data-i18n-title="tt_save_in">
+                                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                            </svg>
+                            <button class="btn-save-ker btn-save-ker-style" data-var="a">a</button>
+                            <button class="btn-save-ker btn-save-ker-style" data-var="b">b</button>
+                            <button class="btn-save-ker btn-save-ker-style" data-var="c">c</button>
+                            <button class="btn-save-ker btn-save-ker-style" data-var="d">d</button>
+                            <span id="kernel-save-confirm" data-i18n="kn_saved" class="kernel-saved-msg">Salvato!</span>
+                        </div>
+                    </div>
+                    <div id="kernel-result-display" class="kernel-result-val">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="calc-helper-overlay" class="overlay-calc-helper">
+            <div class="calc-helper-header">
+                <span data-i18n="calc_help_title">Guida Calcolatrice</span>
+                <span id="close-calc-helper" class="close-icon-btn">&times;</span>
+            </div>
+
+            <div class="calc-helper-body-wrapper">
+                <div id="calc-helper-panel" class="calc-helper-panel-content">
+
+                    <div id="ch-page-1" class="ch-page">
+                        <h3 data-i18n="c_p1_t" class="ch-title">1. Variabili e Input</h3>
+                        <p data-i18n="c_p1_l1"><b>Variabili (a, b, c, d):</b> Memorizzano vettori a 16 componenti (Sedenioni). Selezionabili via tab sopra la griglia.</p>
+                        <p data-i18n="c_p1_l2"><b>Griglia Input:</b> I valori dell'algebra attiva sono bianchi, gli altri grigi, ma tutti modificabili.</p>
+                        <p><b data-i18n="c_p1_l3">Numeri Casuali:</b></p>
+                        <ul class="help-list-ul">
+                            <li data-i18n="h_p2_l3_1"><code>Rand ℍ</code>: Genera Quaternione (indici 0-3)</li>
+                            <li data-i18n="h_p2_l3_2"><code>Rand 𝕆</code>: Genera Ottetto (indici 0-7)</li>
+                            <li data-i18n="h_p2_l3_3"><code>Rand 𝕊</code>: Genera Sedenione completo (0-15)</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-2" class="ch-page" style="display:none;">
+                        <h3 data-i18n="c_p2_t" class="ch-title">2. Tasti Numerici e Operatori Base</h3>
+                        <p data-i18n="c_p2_l1"><b>Numeri:</b> <code>0-9</code> per inserire cifre numeriche.</p>
+                        <p data-i18n="c_p2_l2"><b>Virgola:</b> <code>.</code> (punto) per decimali. Con <b>Shift:</b> <code>,</code> (virgola)</p>
+                        <p><b data-i18n="c_p2_l3">Operatori Base:</b></p>
+                        <ul class="help-list-ul">
+                            <li data-i18n="c_p2_l3_1"><code>+</code> Addizione (Shift: norm Norma)</li>
+                            <li data-i18n="c_p2_l3_2"><code>-</code> Sottrazione (Shift: <code>cnj</code> Coniugato)</li>
+                            <li data-i18n="c_p2_l3_3"><code>×</code> Moltiplicazione (Shift: <code>^</code> Potenza)</li>
+                            <li data-i18n="c_p2_l3_4"><code>÷</code> Divisione (Shift: <code>inv</code> Inverso)</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-3" class="ch-page" style="display:none;">
+                        <h3 data-i18n="c_p3_t" class="ch-title">3. Funzioni Avanzate</h3>
+                        <p data-i18n="c_p3_l1"><b>Parentesi:</b> <code>( )</code> raggruppa operazioni (Shift: <code>[x,y]</code> Commutatore)</p>
+                        <p data-i18n="c_p3_l2"><b>Base Unità:</b> <code>e_n</code> unità base sedenioni (Shift: <code>Ker()</code> Kernel)</p>
+                        <p><b data-i18n="c_p3_l3">Funzioni Notevoli:</b></p>
+                        <ul class="help-list-ul">
+                            <li data-i18n="c_p3_l3_1"><code>norm(x)</code>: Norma (radice della somma dei quadrati)</li>
+                            <li data-i18n="c_p3_l3_2"><code>[x,y]</code>: Commutatore xy - yx</li>
+                            <li data-i18n="c_p3_l3_3"><code>[x,y,z]</code>: Associatore (xy)z - x(yz)</li>
+                            <li data-i18n="c_p3_l3_4"><code>e_(n)</code>: Unità base dell'algebra</li>
+                        </ul>
+                    </div>
+
+                    <div id="ch-page-4" class="ch-page" style="display:none;">
+                        <h3 data-i18n="c_p4_t" class="ch-title">4. Comandi e Confronti</h3>
+                        <p data-i18n="c_p4_l1"><b>Assegnazione:</b> <code>a=5</code> assegna un valore alla variabile</p>
+                        <p><b data-i18n="c_p4_l2">Confronti:</b></p>
+                        <ul class="help-list-ul">
+                            <li data-i18n="c_p4_l2_1"><code>==</code>: Verifica uguaglianza esatta</li>
+                            <li data-i18n="c_p4_l2_2"><code>=?</code>: Verifica uguaglianza con tolleranza numerica</li>
+                        </ul>
+                        <p data-i18n="c_p4_l3"><b>Esempio:</b> <code>[a,b] =? 0</code> verifica se a e b commutano</p>
+                        <p data-i18n="c_p4_l4"><b>Passaggi:</b> Clicca il bottone blu accanto a "=" per visualizzare il calcolo step-by-step.</p>
+                    </div>
+
+                    <div id="ch-page-5" class="ch-page" style="display:none;">
+                        <h3 data-i18n="c_p5_t" class="ch-title">5. Cronologia e Variabili</h3>
+                        <p data-i18n="c_p5_l1"><b>Cronologia:</b> Clicca l'icona in alto a sinistra nel display della calcolatrice per vedere lo storico dei calcoli.</p>
+                        <p><b data-i18n="c_p5_l2">Tasti Variabili:</b></p>
+                        <ul class="help-list-ul">
+                            <li data-i18n="c_p5_l2_1"><code>Azzera</code> (Rosso): Azzera il valore della variabile corrente.</li>
+                            <li data-i18n="c_p5_l2_2"><code>Rand</code>: Genera quaternione (&#x210D;), ottetti (&#x1D546;) o sedenioni(&#x1D54A;) random.</li>
+                        </ul>
+                        <p data-i18n="c_p5_l3"><b>Stato Variabili:</b> Apparirà un <b>pallino verde</b> sui tasti 'a', 'b', 'c' o 'd' del tastierino numerico per indicare visivamente quali variabili contengono un valore non nullo memorizzato.</p>
+                    </div>
+
+                    <div class="ch-footer">
+                        <button id="ch-prev-btn" class="ch-nav-btn" data-i18n="btn_prev">&lt; Indietro</button>
+                        <div id="ch-page-indicator" class="ch-page-indicator">1 / 5</div>
+                        <button id="ch-next-btn" class="ch-nav-btn" data-i18n="btn_next">Avanti &gt;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="zerodiv-overlay" class="overlay-zerodiv-style">
+            <div class="zerodiv-header-bar">
+                <span data-i18n="zerodiv_title">Divisori dello zero</span>
+                <div class="zerodiv-controls-group">
+                    <label id="zerodiv-search-label" title="Cerca" data-i18n-title="tt_search" class="zd-icon-label-style">
+                        <input type="checkbox" id="zerodiv-search-check" style="display:none;">
+                        <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </label>
+
+                    <label id="zerodiv-explain-label" title="Spiegazione" data-i18n-title="tt_explain" class="zd-icon-label-style">
+                        <input type="checkbox" id="zerodiv-explain-check" style="display:none;">
+                        ?
+                    </label>
+
+                    <span id="close-zerodiv-overlay" class="close-icon-btn">&times;</span>
+                </div>
+            </div>
+
+            <div class="calc-helper-body-wrapper">
+                <div id="zerodiv-search-panel" class="zd-panel-overlay-style">
+                    <div class="zd-panel-header-style">
+                        <h3 style="color:#aaaaff; margin:0;"><span data-i18n="zd_search_title">Ricerca divisori dello zero</span> <span id="zd-counter-display">(84)</span></h3>
+                        <button id="clear-search-btn" class="icon-btn-text-red">
+                            <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </div>
+                    <div id="zd-search-keypad" class="zd-search-keypad-grid"></div>
+                    <div class="flex-center-m-10">
+                        <span id="zd-search-messages" class="zd-search-msg"></span>
+                    </div>
+                    <div id="zd-search-results" class="zd-search-results-grid"></div>
+                </div>
+
+                <div id="zerodiv-explanation-panel" class="zd-panel-overlay-style">
+                    <div id="zd-page-1" class="ch-page">
+                        <h3 data-i18n="zd_h1" class="ch-title">Rappresentazione grafica dei divisori dello zero</h3>
+                        <p data-i18n="zd_desc1">In tabella sono elencati gli 84 divisori dello zero dei sedenioni, ossia:</p>
+                        <div class="math-formula-center-large">
+                            (e<sub>a</sub> + e<sub>b</sub>)(e<sub>c</sub> + e<sub>d</sub>) = 0
+                        </div>
+                        <p data-i18n="zd_desc2">In cui gli indici <b>a</b> e <b>c</b> sono minori di 8, mentre gli indici <b>b</b> e <b>d</b> sono maggiori di 8.</p>
+                    </div>
+
+                    <div id="zd-page-2" class="ch-page" style="display:none;">
+                        <p data-i18n="zd_p2_1">Cliccando su uno di essi:</p>
+                        <ol class="help-list-ol">
+                            <li data-i18n="zd_li1" style="margin-bottom:5px;">Verranno memorizzate nelle variabili <b>a</b> e <b>b</b> della calcolatrice i fattori selezionati.</li>
+                            <li data-i18n="zd_li2">Nel grafico verrà visualizzato il piano di Fano corrispondente alla sotto-algebra in cui vivono e<sub>a</sub>, e<sub>b</sub>, e<sub>c</sub> ed e<sub>d</sub>.</li>
+                        </ol>
+                    </div>
+
+                    <div id="zd-page-3" class="ch-page" style="display:none;">
+                        <ul class="help-list-ul-none">
+                            <li style="margin-bottom:10px;"><span data-i18n="zd_li3"><b style="color:#00aaff;">Blu:</b> Terna dell'algebra degli ottetti &#x1D546; (a cui appartengono e<sub>a</sub> ed e<sub>c</sub>).</span></li>
+                            <li style="margin-bottom:10px;"><span data-i18n="zd_li4"><b style="color:#ffdd00;">Giallo:</b> Nodo fulcro e<sub>k</sub> (comune ai cicli {e<sub>a</sub>, e<sub>b</sub>, e<sub>k</sub>} e {e<sub>c</sub>, e<sub>d</sub>, e<sub>k</sub>}).</span></li>
+                            <li style="margin-bottom:10px;"><span data-i18n="zd_li5"><b style="color:#00ff00;">Verde:</b> Se il percorso dal nodo blu al fulcro giallo è in senso <b>concorde</b>.</span></li>
+                            <li><span data-i18n="zd_li6"><b style="color:#ff5555;">Rosso:</b> Se il percorso dal nodo blu al fulcro giallo è in senso <b>non concorde</b>.</span></li>
+                        </ul>
+                    </div>
+
+                    <div id="zd-page-4" class="ch-page" style="display:none;">
+                        <p data-i18n="zd_p4_1" class="zd-note-text">
+                            Se i due cicli sono di colori diversi, nel prodotto ci saranno solo più.<br>
+                            Se i due cicli sono dello stesso colore, nel prodotto si mette meno in uno dei due fattori.
+                        </p>
+                        <div data-i18n="zd_p4_2" class="zd-math-note">
+                            Se vale (e<sub>a</sub>+e<sub>b</sub>)(e<sub>c</sub>+e<sub>d</sub>)=0, allora anche<br>
+                            (e<sub>a</sub>-e<sub>b</sub>)(e<sub>c</sub>-e<sub>d</sub>)=0<br><br>
+                            Se vale (e<sub>a</sub>+e<sub>b</sub>)(e<sub>c</sub>-e<sub>d</sub>)=0, allora anche<br>
+                            (e<sub>a</sub>-e<sub>b</sub>)(e<sub>c</sub>+e<sub>d</sub>)=0
+                        </div>
+                    </div>
+
+                    <div class="ch-footer">
+                        <button id="zd-prev-btn" class="ch-nav-btn" data-i18n="btn_prev">&lt; Indietro</button>
+                        <div id="zd-page-indicator" class="ch-page-indicator">1 / 4</div>
+                        <button id="zd-next-btn" class="ch-nav-btn" data-i18n="btn_next">Avanti &gt;</button>
+                    </div>
+                </div>
+
+                <div id="zerodiv-content-grid"></div>
+            </div>
+        </div>
+
+        <div class="calc-body">
+            <div class="display-area">
+                <div id="toggle-history-btn" class="icon-btn" title="Cronologia" data-i18n-title="tt_history" style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+                    </svg>
+                </div>
+
+                <div id="popout-calc-btn" class="icon-btn" title="Apri in nuova finestra" data-i18n-title="tt_popout"
+                    style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                    </svg>
+                </div>
+
+                <div id="mobile-vars-btn" class="icon-btn" title="Definisci Variabili" data-i18n-title="tt_vars"
+                    style="width:24px; height:24px;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
+                    </svg>
+                </div>
+
+                <div class="input-wrapper" style="padding-left: 30px; box-sizing: border-box;">
+                    <div id="highlight-layer"></div>
+                    <input type="text" id="expression-display" placeholder="Espressione..." data-i18n-placeholder="ph_expr" autocomplete="off"
+                        spellcheck="false" autocorrect="off" autocapitalize="off" inputmode="none">
+                </div>
+                <div id="result-display">0</div>
+            </div>
+
+            <div id="mobile-swipe-nav" class="mobile-swipe-nav">
+                <span id="swipe-nav-left" data-i18n="swipe_formulas" class="swipe-nav-btn">&laquo; Formule</span>
+
+                <label id="formula-explain-label-mobile" title="Spiegazione Formule" data-i18n-title="tt_explain_formulas" class="swipe-icon-label">
+                    <input type="checkbox" id="formula-explain-check-mobile" style="display:none;">
+                    ?
+                </label>
+
+                <label id="calc-helper-label-mobile" title="Guida Calcolatrice" data-i18n-title="tt_calc_guide" class="swipe-icon-label flex">
+                    <input type="checkbox" id="calc-helper-check-mobile" style="display:none;">
+                    ?
+                </label>
+
+                <label id="zerodiv-search-label-mobile" title="Cerca" data-i18n-title="tt_search" class="swipe-icon-label">
+                    <input type="checkbox" id="zerodiv-search-check-mobile" style="display:none;">
+                    <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </label>
+
+                <label id="zerodiv-explain-label-mobile" title="Spiegazione" data-i18n-title="tt_explain" class="swipe-icon-label">
+                    <input type="checkbox" id="zerodiv-explain-check-mobile" style="display:none;">
+                    ?
+                </label>
+
+                <span id="swipe-nav-right" data-i18n="swipe_zerodiv" class="swipe-nav-btn">Divisori dello zero &raquo;</span>
+            </div>
+
+            <div class="calc-view-tabs calc-tabs-override">
+                <button id="calc-formulas-btn" class="view-tab-btn active tab-btn-override" data-i18n="tab_formulas">Formule &#9652;</button>
+                <button id="calc-zerodiv-btn" class="view-tab-btn tab-btn-zerodiv" data-i18n="tab_zerodiv">a&middot;b=0</button>
+            </div>
+            <div id="calc-formula-menu"></div>
+
+            <div id="view-keypad" class="calc-view active">
+                <div class="keypad keypad-grid-override" id="main-keypad">
+                    <button class="key-btn key-var" data-var-hold="a">a</button>
+                    <button class="key-btn key-var" data-var-hold="b">b</button>
+                    <button class="key-btn key-var" data-var-hold="c">c</button>
+                    <button class="key-btn key-var" data-var-hold="d">d</button>
+
+                    <button class="key-btn key-del has-shift" id="btn-keypad-canc">
+                        <span class="key-primary">⌫</span><span class="key-secondary">AC</span>
+                    </button>
+                    <button class="key-btn key-2nd" id="btn-shift">Shift</button>
+                    <button class="key-btn has-shift" id="btn-keypad-paren" style="position:relative;">
+                        <span class="key-primary">( )</span>
+                        <span class="key-secondary">
+                            <span id="label-paren-shift">[x,y]</span>
+                            <span style="position:absolute; bottom:4px; right:4px; width:0; height:0; border-left:5px solid transparent; border-bottom:5px solid #888;"></span>
+                        </span>
+                    </button>
+                    <button class="key-btn key-var has-shift btn-handle-key" data-key="e_n" title="Inserisci base" data-i18n-title="tt_insert_base">
+                        <span class="key-primary">e<sub>n</sub></span><span class="key-secondary">Ker()</span>
+                    </button>
+
+                    <button class="key-btn key-num btn-handle-key" data-key="7">7</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="8">8</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="9">9</button>
+                    <button class="key-btn key-op has-shift btn-handle-key" data-key="/">
+                        <span class="key-primary">&divide;</span><span class="key-secondary"
+                            style="color:#00aaff;">inv</span>
+                    </button>
+
+                    <button class="key-btn key-num btn-handle-key" data-key="4">4</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="5">5</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="6">6</button>
+                    <button class="key-btn key-op has-shift btn-handle-key" data-key="*">
+                        <span class="key-primary">&times;</span><span class="key-secondary"
+                            style="color:#00aaff;">^</span>
+                    </button>
+
+                    <button class="key-btn key-num btn-handle-key" data-key="1">1</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="2">2</button>
+                    <button class="key-btn key-num btn-handle-key" data-key="3">3</button>
+                    <button class="key-btn key-op has-shift btn-handle-key" data-key="-">
+                        <span class="key-primary">-</span><span class="key-secondary" style="color:#00aaff;">cnj</span>
+                    </button>
+
+                    <button class="key-btn key-num has-shift btn-handle-key" data-key=".">
+                        <span class="key-primary">.</span><span class="key-secondary">,</span>
+                    </button>
+                    <button class="key-btn key-num btn-handle-key" data-key="0">0</button>
+                    <div style="position:relative; display:flex; height:100%;">
+                        <div id="eval-popup" class="eval-popup">
+                            <button id="btn-eval-assign" class="key-btn key-eval eval-btn-assign">:=</button>
+                            <button id="btn-eval-eq" class="key-btn key-eval eval-btn-eq">=?</button>
+                        </div>
+                        <button class="key-btn key-eval has-shift" id="btn-keypad-eval" style="width:100%; position:relative;">
+                            <span class="key-primary">
+                                =
+                                <span style="position:absolute; bottom:4px; right:4px; width:0; height:0; border-left:5px solid transparent; border-bottom:5px solid rgba(255,255,255,0.6);"></span>
+                            </span>
+                            <span class="key-secondary flex-center">
+                                <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:white;">
+                                    <path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm4-5h12v2H8zm0 5h12v2H8zm0-10h12v2H8z" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <button class="key-btn key-op has-shift btn-handle-key" data-key="+">
+                        <span class="key-primary">+</span><span class="key-secondary" style="color:#00aaff;">norm</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-vars" class="calc-view">
+
+                <div class="var-tabs" style="margin-top: 10px;">
+                    <div class="var-tab active" data-var="a" data-i18n="var_a">Var A</div>
+                    <div class="var-tab" data-var="b" data-i18n="var_b">Var B</div>
+                    <div class="var-tab" data-var="c" data-i18n="var_c">Var C</div>
+                    <div class="var-tab" data-var="d" data-i18n="var_d">Var D</div>
+                </div>
+
+                <div style="margin-bottom: 5px;">
+
+                    <div id="input-grid" class="vector-inputs" style="margin-bottom: 4px;"></div>
+                    <div class="var-action-grid">
+                        <button class="calc-action-btn btn-grid-clear" id="btn-grid-clear" data-i18n="btn_clear">Azzera</button>
+                        <button class="calc-action-btn btn-rand" id="btn-rand-h" title="Random Quaternione" data-i18n-title="tt_rand_h">Rand &#x210D;</button>
+                        <button class="calc-action-btn btn-rand" id="btn-rand-o" title="Random Ottetto" data-i18n-title="tt_rand_o">Rand &#x1D546;</button>
+                        <button class="calc-action-btn btn-rand" id="btn-rand-s" title="Random Sedenione" data-i18n-title="tt_rand_s">Rand &#x1D54A;</button>
+                    </div>
+                </div>
+
+                <div class="vars-bottom-row">
+                    <button id="back-to-keypad-btn" class="calc-action-btn btn-back-keypad" data-i18n="btn_back_keypad">&larr; Torna alla tastiera</button>
+                    <button id="calc-kernel-btn" class="calc-mode-sel" style="display:none !important;"
+                        title="Calcola l'intero spazio annullatore di A" data-i18n-title="tt_calc_kernel">
+                        b &isin; Ker(a)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rotation-ui" lang="en-US" class="rotation-ui-container">
+        
+        <div id="rot-help-btn" class="rot-help-btn-style">?</div>
+
+        <div data-i18n="rot_title" class="rot-title">Quaternione di Rotazione</div>
+        <div class="rot-axis-group">
+            <div class="rot-axis-col">
+                <label data-i18n="rot_axis_x" class="rot-axis-label-x">ASSE X</label> 
+                <input type="text" inputmode="none" autocomplete="off" id="rot-axis-x" value="0" class="rot-input-x">
+            </div>
+            <div class="rot-axis-col">
+                <label data-i18n="rot_axis_y" class="rot-axis-label-y">ASSE Y</label> 
+                <input type="text" inputmode="none" autocomplete="off" id="rot-axis-y" value="0" class="rot-input-y">
+            </div>
+            <div class="rot-axis-col">
+                <label data-i18n="rot_axis_z" class="rot-axis-label-z">ASSE Z</label> 
+                <input type="text" inputmode="none" autocomplete="off" id="rot-axis-z" value="1" class="rot-input-z">
+            </div>
+        </div>
+        <div class="rot-angle-group">
+            <label data-i18n="rot_angle" class="rot-angle-label">ANGOLO (&deg;):</label> 
+            <input type="range" id="rot-angle-slider" min="0" max="360" value="0" class="rot-angle-slider">
+            <input type="text" inputmode="none" autocomplete="off" id="rot-angle-num" value="0" class="rot-angle-input">
+        </div>
+        <div class="rot-quat-group">
+            <label data-i18n="rot_quat" class="rot-quat-label">QUATERNIONE (a + bi + cj + dk)</label>
+            <div class="rot-quat-inputs">
+                <input type="text" inputmode="none" autocomplete="off" id="rot-q-w" value="1.00" title="a (Parte reale)" class="rot-q-input rot-q-w" placeholder="a">
+                <span class="rot-plus">+</span>
+                <input type="text" inputmode="none" autocomplete="off" id="rot-q-x" value="0.00" title="b (Coefficiente i)" class="rot-q-input rot-q-x" placeholder="b"><span class="rot-q-x">i</span>
+                <span class="rot-plus">+</span>
+                <input type="text" inputmode="none" autocomplete="off" id="rot-q-y" value="0.00" title="c (Coefficiente j)" class="rot-q-input rot-q-y" placeholder="c"><span class="rot-q-y">j</span>
+                <span class="rot-plus">+</span>
+                <input type="text" inputmode="none" autocomplete="off" id="rot-q-z" value="0.00" title="d (Coefficiente k)" class="rot-q-input rot-q-z" placeholder="d"><span class="rot-q-z">k</span>
+            </div>
+        </div>
+
+        <div id="rot-help-panel" class="rot-help-panel-overlay">
+            <div class="rot-help-header">
+                <strong data-i18n="rot_conv_title" class="rot-help-title">Conversione Quaternioni</strong>
+                <span id="close-rot-help" class="close-rot-help-btn">&times;</span>
+            </div>
+            <div>
+                <span data-i18n="rot_conv_p1">Dato un asse di rotazione <b style="color:#aaa;">(x, y, z)</b> normalizzato e un angolo <b style="color:#00ffaa;">&theta;</b>, il quaternione di rotazione <b>q = a + bi + cj + dk</b> è:<br><br></span>
+                <div class="rot-formula-box">
+                    <b style="color:#fff;">a</b> = cos(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                    <b style="color:#ff4444;">b</b> = x &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                    <b style="color:#44ff44;">c</b> = y &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)<br>
+                    <b style="color:#4444ff;">d</b> = z &middot; sin(<b style="color:#00ffaa;">&theta;</b>/2)
+                </div>
+                <span data-i18n="rot_conv_p2">La conversione inversa (da quaternione ad asse/angolo) è:<br><br></span>
+                <div class="rot-formula-box">
+                    <b style="color:#00ffaa;">&theta;</b> = 2 &middot; arccos(a)<br>
+                    <b>(x,y,z)</b> = (b,c,d)/&radic;(1-a&sup2;)
+                </div>
+                <div data-i18n="rot_conv_note" class="rot-conv-note">
+                    <i>Nota: i quaternioni inseriti manualmente nella barra vengono normalizzati (q/|q|) in automatico per generare sempre rotazioni geometricamente valide.</i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <div id="canvas-container">
+            <div id="top-bar">
+                <div id="algebra-switch">
+                    <div class="alg-dots-wrapper">
+                        <div id="alg-mobile-trigger" class="alg-dot" style="display: none;">𝕊</div>
+
+                        <div class="alg-dots" id="alg-dots-list">
+                            <div class="alg-dot" data-target="3" title="Quaternioni" data-i18n-title="tt_quat">ℍ</div>
+                            <div class="alg-dot" data-target="7" title="Ottetti" data-i18n-title="tt_oct">𝕆</div>
+                            <div class="alg-dot active" data-target="15" title="Sedenioni" data-i18n-title="tt_sed">𝕊</div>
+                        </div>
+                    </div>
+                    <div id="alg-title-text">SEDENIONI (&#x1D54A;)</div>
+                </div>
+            </div>
+
+            <div id="settings-mobile-btn" title="Impostazioni Vista" data-i18n-title="dt_settings">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                    <path
+                        d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07-.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                </svg>
+            </div>
+
+            <div id="app-dock">
+                <div id="calc-toggle-btn" class="ui-btn" data-tooltip="Calcolatrice vettoriale" data-i18n-tooltip="dt_calc">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z M7 7h10v2H7V7zm0 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+                    </svg>
+                </div>
+
+                <div class="dock-group">
+                    <div id="closure-generator-btn" class="ui-btn" data-tooltip="Chiudi sottoalgebra" data-i18n-tooltip="dt_closure"
+                        style="display: none; position: relative;">
+                        <span id="closure-badge"
+                            style="position: absolute; top: -5px; right: -5px; background: #00ffaa; color: #000; border-radius: 50%; width: 16px; height: 16px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 5px rgba(0,255,170,0.8); pointer-events: none; z-index: 10;">0</span>
+                        <span
+                            style="font-family: 'Times New Roman', serif; font-size: 22px; font-weight: bold; text-decoration: overline; text-decoration-thickness: 1px; line-height: 1; margin-top: 2px;">K</span>
+                    </div>
+
+                    <div class="dock-divider" id="closure-divider" style="display: none;"></div>
+
+                    <div id="rotation-toggle-btn" class="ui-btn" data-tooltip="Rotazione 3D" data-i18n-tooltip="dt_rotation">
+    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20 M2 12h20 M4.93 4.93l14.14 14.14" stroke="currentColor" opacity="0.6"/>
+        <circle cx="12" cy="12" r="6" stroke="#00aaff" stroke-width="2" />
+        <path d="M12 6a6 6 0 0 1 6 6" stroke="#00ffaa" stroke-width="2"/>
+    </svg>
+</div>
+
+                    <div id="settings-toggle-btn" class="ui-btn" data-tooltip="Impostazioni vista" data-i18n-tooltip="dt_settings">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.22-.07.47.12.61l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                        </svg>
+                    </div>
+
+                    <div id="settings-menu">
+                        <div class="menu-grid">
+                            <button id="home-btn" class="menu-btn" title="Reset Camera" data-i18n-title="menu_reset_cam">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                                </svg>
+                                <span data-i18n="menu_reset">Reset Vista</span>
+                            </button>
+
+                            <button id="grid-toggle-btn" class="menu-btn" title="Mostra/Nascondi Griglia" data-i18n-title="menu_grid">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z" />
+                                </svg>
+                                <span id="grid-label" data-i18n="grid_off">Griglia: OFF</span>
+                            </button>
+
+                            <button id="help-btn-trigger" class="menu-btn" title="Apri Guida" data-i18n-title="menu_open_help">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" />
+                                </svg>
+                                <span data-i18n="menu_help">Guida</span>
+                            </button>
+
+                            <button id="toggle-32-btn" class="menu-btn"
+                                title="Trigintaduenioni" data-i18n-title="menu_32_title">
+                                <span
+                                    style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 22px; line-height: 1;">&#x1D54B;</span>
+                                <span data-i18n="menu_32">32-ioni (beta)</span>
+                            </button>
+
+                            <button id="theme-btn" class="menu-btn full-width" title="Cambia Sfondo" data-i18n-title="menu_theme">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                                </svg>
+                                <span id="theme-label" data-i18n="theme_label">Sfondo</span>
+                            </button>
+                        </div>
+
+                        <div class="setting-row settings-row-space-between">
+                            <span data-i18n="settings_lang" class="settings-label">LINGUA / MUSICA</span>
+                            <div class="settings-control-group">
+                                <select id="lang-selector" class="settings-select">
+                                    <option value="it">Italiano</option>
+                                    <option value="en">English</option>
+                                    <option value="fr">Français</option>
+                                    <option value="de">Deutsch</option>
+                                    <option value="es">Español</option>
+                                    <option value="pt">Português</option>
+                                </select>
+                                
+                                <button id="music-toggle-btn" class="music-toggle-btn" title="Attiva/Disattiva Musica">
+                                    <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;">
+                                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                                    </svg>
+                                    <span id="music-status-text">On</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <button id="play-pause-btn" title="Play/Pausa" data-i18n-title="menu_play_pause">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                                </svg>
+                            </button>
+                            <div class="slider-wrapper">
+                                <div class="slider-header">
+                                    <span data-i18n="speed" class="settings-label">VELOCITÀ</span>
+                                    <span id="speed-val" class="slider-val">0.3x</span>
+                                </div>
+                                <input type="range" id="speed-slider" min="0" max="2" step="0.1" value="0.3">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="opacity-icon-wrapper">
+                                <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;">
+                                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                </svg>
+                            </div>
+                            <div class="slider-wrapper">
+                                <div class="slider-header">
+                                    <span data-i18n="opacity" class="settings-label">OPACITÀ</span>
+                                    <span id="opacity-val" class="slider-val">0.4</span>
+                                </div>
+                                <input type="range" id="opacity-slider" min="0.1" max="1" step="0.01" value="0.4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dock-show-all-btn" class="ui-btn" data-tooltip="Mostra tutto" data-i18n-tooltip="dt_show_all" style="display:none;">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="sidebar-toggle-btn" class="ui-btn" data-tooltip="Database" data-i18n-tooltip="dt_database">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z" />
+                    </svg>
+                </div>
+
+                <div id="rot-sidebar-btn" class="ui-btn" data-tooltip="Sequenza Rotazioni" data-i18n-tooltip="dt_rot_seq" style="display:none;">
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path d="M 6 3 C 2 8 2 16 6 21 M 18 3 C 22 8 22 16 18 21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="7.5" y="6" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="10" y="6" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="12.5" y="6" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="15" y="6" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="7.5" y="9" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="10" y="9" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="12.5" y="9" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="15" y="9" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="7.5" y="12" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="10" y="12" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="12.5" y="12" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="15" y="12" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="7.5" y="15" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="10" y="15" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="12.5" y="15" width="1.5" height="1.5" fill="currentColor"/>
+                        <rect x="15" y="15" width="1.5" height="1.5" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="js/core/i18n.js"></script>
+    <script type="module" src="js/main.js"></script>
+
+    <div id="sidebar">
+        <div id="sidebar-resizer"></div>
+        <div class="sidebar-tabs">
+            <button class="tab-btn active" data-tab="triplets" id="tab-btn-triplets" data-i18n="tab_triplets">Terne</button>
+            <button class="tab-btn" data-tab="fano" id="tab-btn-fano" style="display:none;" data-i18n="tab_fano">Piani Fano</button>
+            <button class="tab-btn" data-tab="pg32" id="tab-btn-pg32" style="display:none;" data-i18n="tab_pg32">PG(3,2)</button>
+            <button class="tab-btn" data-tab="table" id="tab-btn-table" data-i18n="tab_table">Tabella</button>
+            <button class="tab-btn" data-tab="rotations" id="tab-btn-rotations" style="display:none;" data-i18n="tab_rotations">Sequenza</button>
+            <button id="close-sidebar-btn" style="display:none;">&times;</button>
+        </div>
+
+        <div id="tab-triplets" class="tab-content active">
+            <div id="triplets-scroll">
+                <div class="triplets-grid" id="buttons-container"></div>
+            </div>
+        </div>
+
+        <div id="tab-fano" class="tab-content">
+            <div data-i18n="hint_fano"
+                style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); text-align:center; color:#667788; font-size:11px; font-style:italic;">
+                In blu gli ottetti, in verde gli ottetti di divisione, in rosso gli ottetti spezzati
+            </div>
+            <div style="flex:1; overflow-y:auto; padding:10px;">
+                <div class="triplets-grid" id="fano-grid"></div>
+            </div>
+        </div>
+
+        <div id="tab-pg32" class="tab-content">
+            <div style="flex:1; overflow-y:auto; padding:10px;">
+                <div class="triplets-grid" id="pg32-grid"></div>
+            </div>
+        </div>
+
+        <div id="tab-table" class="tab-content">
+            <div id="table-scroll">
+                <table id="sedenion-table"></table>
+            </div>
+            <div id="table-hint" data-i18n="hint_table">Convenzione: Colonna (Sx) &times; Riga (Alto).</div>
+        </div>
+
+                <div id="tab-rotations" class="tab-content">
+            <div class="tab-rotations-container">
+                <div class="rot-seq-header">
+                    <span data-i18n="rot_seq_title">Sequenza Trasformazioni</span>
+                    <span id="rot-seq-clear" class="rot-seq-clear" data-i18n="rot_seq_clear">Svuota</span>
+                </div>
+                <div id="rot-sequence-list" class="rot-seq-list"></div>
+                <div class="rot-seq-footer">
+                    <div class="rot-seq-btn-group">
+                        <button id="calc-qtot-btn" class="btn-calc-qtot" data-i18n="btn_calc_qtot">Calcola q<sub>tot</sub></button>
+                        <button id="calc-prot-btn" class="btn-calc-prot" data-i18n="btn_calc_prot">Calcola p<sub>rot</sub></button>
+                    </div>
+                    <div id="qtot-result" class="qtot-result-box"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

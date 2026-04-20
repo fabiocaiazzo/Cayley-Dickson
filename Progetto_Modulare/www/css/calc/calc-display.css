@@ -1,0 +1,191 @@
+/* --- TERMINAL DISPLAY --- */
+.display-area {
+    background: #050505;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    /* Ombra interna profonda */
+}
+
+/* Linea sottile verde a sinistra per decorazione */
+.display-area::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    bottom: 10%;
+    width: 2px;
+    background: #00ffaa;
+    opacity: 0.5;
+}
+
+#expression-display {
+    color: transparent; /* Testo gestito dall'highlight layer */
+    text-shadow: none;
+    caret-color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Contenitore relativo per allineare input e evidenziatore */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* STILE CONDIVISO: Fondamentale per l'allineamento pixel-perfect */
+#expression-display,
+#highlight-layer {
+    position: absolute;
+    top: 0;
+    left: 35px; /* L'area fisica inizia DOPO le icone */
+    width: calc(100% - 35px); /* Calcola lo spazio rimanente */
+    height: 100%;
+
+    /* Proprietà Font IDENTICHE */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0px;
+
+    /* Spaziatura IDENTICA */
+    padding: 0 4px 0 0; /* Padding sinistro rimosso, gestito dal 'left' */
+    margin: 0;
+    border: none;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+#expression-display {
+    background: transparent;
+    color: transparent;
+    outline: none;
+    z-index: 2;
+}
+
+#highlight-layer {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    background: transparent;
+}
+
+/* Stili per le parentesi evidenziate */
+.hl-match {
+    background-color: rgba(0, 136, 255, 0.4);
+    color: inherit;
+    border-radius: 2px;
+    box-shadow: 0 0 4px #0088ff;
+}
+
+.hl-error {
+    background-color: transparent;
+    color: inherit;
+    border-radius: 2px;
+}
+
+/* Parentesi fantasma (auto-completamento) */
+.hl-ghost {
+    color: rgba(255, 255, 255, 0.4); /* Bianco semi-trasparente */
+    pointer-events: none;
+}
+
+#result-display {
+    width: 100%;
+    padding: 0 4px 0 35px; /* Margine interno sinistro per salvare le icone */
+    box-sizing: border-box; /* Obbliga a non sformare la larghezza col padding */
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: right;
+    height: 40px;
+    overflow-y: auto;
+    /* Proprietà standard (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: #00aa66 transparent;
+    white-space: normal;
+    word-break: break-all; /* Fondamentale per i vettori lunghi senza spazi */
+    line-height: 1.2;
+}
+
+/* Stile scrollbar per browser Webkit (Chrome, Safari, iOS, Android) */
+#result-display::-webkit-scrollbar {
+    width: 4px;
+}
+#result-display::-webkit-scrollbar-track {
+    background: transparent;
+}
+#result-display::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 170, 0.4); /* Verde semitrasparente coordinato al testo */
+    border-radius: 10px;
+}
+
+.vector-inputs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(10, 15, 20, 0.6);
+    border: 1px solid rgba(0, 170, 255, 0.15);
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+/* Impedisce la selezione delle etichette (1, e1, e2...) nella griglia input */
+.input-group span, 
+.input-group label {
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none; /* Rende le etichette "trasparenti" ai tocchi */
+}
+
+/* Effetto focus sugli input */
+.input-group:focus-within {
+    border-color: #00aaff;
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+    background: rgba(0, 20, 40, 0.8);
+}
+
+.input-group.hidden {
+    display: none;
+}
+
+.num-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #00aaff;
+    /* Colore digitale */
+    text-align: right;
+    font-family: 'Consolas', monospace;
+    font-weight: bold;
+    outline: none;
+    font-size: 12px;
+    text-shadow: 0 0 2px rgba(0, 170, 255, 0.3);
+}

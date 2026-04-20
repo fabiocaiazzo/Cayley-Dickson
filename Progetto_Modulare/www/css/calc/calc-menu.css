@@ -1,0 +1,239 @@
+/* --- MENU FORMULE CALCOLATRICE (Spostato e adattato) --- */
+#calc-formula-menu {
+    position: absolute;
+    /* Posizione relativa al nuovo contenitore in view-vars */
+    top: 45px;
+    left: 10px;
+    background: rgba(30, 30, 35, 0.98);
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 10px;
+    width: 240px;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    z-index: 2500;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    /* FIX: Evita che il padding sommandosi al 100% esca dallo schermo */
+}
+
+#calc-formula-menu.visible,
+#calc-zerodiv-menu.visible {
+    display: flex;
+    animation: fadeInMenu 0.2s ease-out;
+}
+
+/* Stile specifico per il menu divisori zero */
+/* --- OVERLAY DIVISORI ZERO --- */
+#zerodiv-overlay {
+    position: absolute;
+    top: 0;
+    /* Modificato: Copre intera calcolatrice */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(25, 20, 20, 0.98);
+    z-index: 2600;
+    /* Sopra al calc-body */
+    display: none;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+}
+
+#zerodiv-overlay.visible {
+    display: flex;
+    animation: fadeInMenu 0.2s ease-out;
+}
+
+#zerodiv-content-grid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden; /* Blocca la scrollbar orizzontale */
+    padding: 6px 4px; /* Recupera spazio ai lati */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 PER RIGA */
+    gap: 4px; /* Restringe lo spazio tra i tasti */
+    align-content: start;
+}
+
+/* --- Stile Scrollbar Scura e Sottile per PC --- */
+#zerodiv-content-grid::-webkit-scrollbar {
+    width: 6px;
+}
+#zerodiv-content-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+#zerodiv-content-grid::-webkit-scrollbar-thumb {
+    background: rgba(0, 170, 255, 0.3);
+    border-radius: 3px;
+}
+#zerodiv-content-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 170, 255, 0.6);
+}
+
+.zerodiv-grid-btn {
+    background: rgba(30, 35, 40, 0.6);
+    color: #aaccff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px 0px; /* Azzerato il padding laterale per sfruttare tutto il tasto */
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12.5px; /* Testo nettamente più grande e leggibile */
+    letter-spacing: -0.5px; /* Compensa l'ingrandimento avvicinando i caratteri */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.2s;
+    min-height: 40px;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.zerodiv-grid-btn sub {
+    font-size: 0.95em; /* Reso leggermente più grande anche il pedice */
+    vertical-align: baseline;
+    position: relative;
+    top: 0.3em;
+    margin-left: 0px; /* Rimosso margine per risparmiare spazio orizzontale */
+}
+
+.zerodiv-grid-btn:hover {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: #00aaff;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 136, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.zerodiv-grid-btn:active {
+    transform: scale(0.95);
+}
+
+.calc-mode-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    position: relative;
+    min-width: 0;
+    /* Permette al contenuto di restringersi se serve */
+}
+
+/* Forza il selettore a non essere più largo del necessario */
+#calc-alg-select {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
+}
+
+.calc-mode-sel {
+    background: #0066cc;
+    color: white;
+    border: 1px solid #0088ff;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    /* Impedisce alla freccia di andare a capo */
+    width: auto;
+    /* Si adatta al contenuto (H/O/S) */
+    min-width: fit-content;
+}
+
+/* --- FORMULA BUTTONS & HORIZONTAL RESIZER --- */
+#formula-container {
+    padding: 10px;
+    background: #1b1b20;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 50px;
+}
+
+#table-resizer,
+#triplets-resizer {
+    height: 16px;
+    width: 100%;
+    background: #2a2a30;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+    position: relative;
+    touch-action: none;
+    z-index: 10;
+}
+
+#table-resizer::after,
+#triplets-resizer::after {
+    content: '';
+    width: 40px;
+    height: 4px;
+    background: #0088ff;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(0, 136, 255, 0.5);
+}
+
+#table-resizer:hover::after,
+#triplets-resizer:hover::after {
+    background: #33aaff;
+    width: 60px;
+}
+
+.formula-group-title {
+    color: #888;
+    font-size: 11px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.formula-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    /* FIX: Impedisce ai tasti di strabordare a destra */
+    text-align: left;
+    background: #25252a;
+    color: #ddd;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Times New Roman', serif;
+    font-size: 13px;
+    font-style: italic;
+    transition: all 0.2s;
+}
+
+.formula-btn:hover {
+    background: #333;
+    border-color: #0088ff;
+    color: white;
+    transform: translateX(2px);
+}
+
+.formula-btn strong {
+    font-family: 'Segoe UI', sans-serif;
+    font-style: normal;
+    font-size: 11px;
+    color: white;
+    margin-right: 5px;
+}

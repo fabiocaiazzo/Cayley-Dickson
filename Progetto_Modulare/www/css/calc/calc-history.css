@@ -1,0 +1,111 @@
+#history-overlay {
+    position: absolute;
+    /* Modificato: Copre tutto lo spazio */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 15, 20, 0.98);
+    z-index: 3000;
+    /* Aumentato per coprire i tasti vista (z-index 2500) */
+    /* Sopra a tutto */
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    /* Match bordi calcolatrice */
+    backdrop-filter: blur(10px);
+}
+
+#history-overlay.open {
+    transform: translateX(0);
+}
+
+.history-header {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    background: #25252a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: white;
+}
+
+#calc-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.log-entry {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.log-entry:hover {
+    border-color: #0088ff;
+    background: #222;
+}
+
+.log-expr {
+    color: #888;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.log-res {
+    color: #0f8;
+    font-family: monospace;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+/* STEPS STYLING */
+.step-row {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+}
+
+.step-row:nth-child(even) {
+    background: #222;
+}
+
+.step-idx {
+    color: #888;
+    font-size: 10px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.step-op {
+    color: #aaaaff;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.step-val {
+    color: #ddd;
+    font-family: monospace;
+}
+
+.step-res {
+    color: #0f8;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.step-arrow {
+    color: #666;
+    margin: 0 5px;
+}

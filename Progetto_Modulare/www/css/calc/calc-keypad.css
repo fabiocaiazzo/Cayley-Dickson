@@ -1,0 +1,315 @@
+/* --- SHIFT KEYPAD STYLES --- */
+.key-primary {
+    display: block;
+    pointer-events: none;
+}
+
+.key-secondary {
+    display: none;
+    color: #aabbcc;
+    font-size: 11px;
+    font-weight: bold;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+.shift-active .key-primary {
+    display: none;
+}
+
+.shift-active .key-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.shift-active .key-secondary.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.shift-active .key-eval {
+    background: #4444aa !important;
+    border-color: #5555cc !important;
+}
+
+.key-2nd {
+    background: #776600 !important;
+    color: #ffdd00 !important;
+    border-color: #998800 !important;
+    font-weight: bold;
+}
+
+.key-2nd.active {
+    background: #998800 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    border-color: #bbcc00 !important;
+}
+
+.var-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0;
+    flex-shrink: 0;
+}
+
+.var-tab {
+    flex: 1;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-top: 2px solid #444;
+    border-bottom: none;
+    color: #888;
+    padding: 6px 2px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    font-size: 11px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.var-tab:hover {
+    background: #333;
+}
+
+.var-tab.active {
+    background: #333;
+    color: white;
+    border-top: 2px solid #0088ff;
+}
+
+/* --- TASTIERA TOUCH --- */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: none;
+    flex-shrink: 0;
+}
+
+.key-btn {
+    background: rgba(40, 45, 50, 0.4);
+    color: #aabbcc;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    height: 44px;
+    /* Altezza fissa per consistenza */
+    border-radius: 2px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Aggiunto per posizionare l'indicatore */
+}
+
+.var-indicator {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: #00ffaa;
+    border-radius: 50%;
+    display: none;
+    box-shadow: 0 0 5px #00ffaa;
+    pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-btn:hover {
+        background: #3a3a3a;
+    }
+}
+
+
+.key-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-eval:hover {
+        background: rgba(0, 255, 170, 0.3);
+        box-shadow: 0 0 15px rgba(0, 255, 170, 0.2);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-del:hover {
+        background: rgba(255, 50, 50, 0.3);
+    }
+}
+
+/* Variabili Tabs in alto (Vars view) */
+.calc-view-tabs {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    margin: 0 -12px 10px -12px;
+    padding: 0 12px 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.view-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #667788;
+    border-radius: 0;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+
+.view-tab-btn.active {
+    background: transparent;
+    color: #00aaff;
+    border-bottom: 2px solid #00aaff;
+    box-shadow: none;
+}
+
+.calc-action-btn {
+    background: #2a2a30;
+    border: 1px solid #444;
+    color: #ccc;
+    padding: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    font-size: 11px;
+    font-weight: bold;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.calc-action-btn:hover {
+    background: #3a3a40;
+    color: white;
+    border-color: #0088ff;
+}
+
+.calc-action-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(0, 170, 255, 0.3) !important;
+    border-color: rgba(0, 170, 255, 0.6) !important;
+}
+
+.btn-back-keypad {
+    background: #0055aa;
+    border-color: #0077cc;
+    color: white;
+}
+
+.btn-back-keypad:hover {
+    background: #0066cc;
+    border-color: #0088ff;
+}
+
+.btn-grid-clear {
+    background: #882222;
+    border-color: #cc3333;
+    color: white;
+}
+
+.btn-grid-clear:hover {
+    background: #aa2222;
+    border-color: #ff4444;
+}
+
+.btn-grid-clear:active {
+    transform: scale(0.96) !important;
+    background: rgba(204, 51, 51, 0.3) !important;
+    border-color: rgba(204, 51, 51, 0.8) !important;
+}
+
+.btn-back-keypad {
+    background: #0055aa;
+    border-color: #0077cc;
+    color: white;
+}
+
+.btn-back-keypad:hover {
+    background: #0066cc;
+}
+
+.btn-grid-clear {
+    background: #882222;
+    border-color: #cc3333;
+    color: white;
+}
+
+.btn-grid-clear:hover {
+    background: #aa2222;
+}
+
+.btn-grid-clear:active {
+    transform: scale(0.96) !important;
+    background: rgba(204, 51, 51, 0.3) !important;
+    border-color: rgba(204, 51, 51, 0.8) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-btn:hover {
+        background: #3a3a3a;
+    }
+}
+
+.key-num {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #eee;
+}
+
+.key-op {
+    background: #2a2a2a;
+}
+
+.key-eval {
+    background: #008855;
+    border-color: #00aa66;
+}
+
+.key-del {
+    background: #662222;
+}
+
+/* --- CORREZIONE DIMENSIONI SOTTOMENU TASTO UGUALE --- */
+.eval-popup {
+    flex-direction: row !important; /* Mette i tasti in orizzontale */
+    gap: 8px !important; /* Spazio tra i due bottoni */
+    width: max-content !important; /* Allarga il box quanto serve */
+    padding: 6px !important;
+    border-radius: 8px !important;
+}
+
+.eval-popup button {
+    height: 45px !important;
+    min-width: 60px !important; /* Rende il tasto più largo */
+    font-size: 16px !important;
+    flex: 1;
+}
