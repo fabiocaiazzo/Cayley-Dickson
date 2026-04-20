@@ -53,8 +53,9 @@ export function setupGrid() {
             if (e.target.classList.contains('num-input')) {
                 const rawVal = e.target.value.replace(',', '.').trim();
                 
-                // Validazione tramite Espressione Regolare per accettare SOLO veri numeri
-                const isInvalid = rawVal !== '' && !/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(rawVal);
+                // Validazione tramite Espressione Regolare per accettare SOLO veri numeri.
+                // Accettiamo '-', '+', '-.' come stati intermedi validi (l'utente sta ancora digitando).
+                const isInvalid = rawVal !== '' && rawVal !== '-' && rawVal !== '+' && rawVal !== '-.' && !/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(rawVal);
 
                 if (isInvalid) {
                     e.target.style.setProperty('background-color', 'rgba(255, 80, 80, 0.4)', 'important');

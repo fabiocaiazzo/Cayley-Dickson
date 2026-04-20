@@ -50,6 +50,19 @@ export function activateTripletFromTable(r, c) {
     buildTable(limit);
 
     if (r === 0 || c === 0 || r === c) {
+        // Reset la vista 3D: mostra tutte le terne/nodi nell'algebra corrente
+        tripletVisuals.forEach(tv => {
+            const isVisible = tv.ids.every(val => val <= limit);
+            tv.mesh.visible = isVisible;
+            if (tv.hitMesh) tv.hitMesh.visible = isVisible;
+        });
+        for (let k in pointObjects) {
+            const id = parseInt(k);
+            const visible = id <= limit;
+            pointObjects[k].mesh.visible = visible;
+            pointObjects[k].label.visible = visible;
+        }
+        tripletButtons.forEach(b => b.classList.remove('active'));
         return;
     }
 

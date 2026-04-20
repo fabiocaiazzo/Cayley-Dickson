@@ -1,5 +1,5 @@
 import { t } from '../core/i18n.js';
-import { isMobile } from '../core/constants.js';
+import { isMobile, SWIPE_THRESHOLD_RATIO, SWIPE_DIRECTION_MIN_PX, SWIPE_DIRECTION_LOCK_PX } from '../core/constants.js';
 import { updateZeroDivisorUI } from '../calculator/calculator_zerodiv.js';
 import { updateCalcUI } from '../calculator/calculator_formulas.js';
 import { CalcBridge } from '../calculator/calculator_popout.js';
@@ -246,6 +246,9 @@ const startCarouselDrag = (x, y) => {
     swipeStartX = x;
     swipeStartY = y;
     swipeCurrentX = x;
+    // Rende visibili i pannelli adiacenti durante il trascinamento
+    const track = CalcBridge.getElementById('carousel-track');
+    if (track) track.classList.add('is-dragging');
 };
 
 const moveCarouselDrag = (x, y, e) => {
@@ -256,23 +259,32 @@ const moveCarouselDrag = (x, y, e) => {
     const deltaY = y - swipeStartY;
 
     if (!swipeDirectionDetermined) {
-        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+        if (Math.abs(deltaX) > SWIPE_DIRECTION_MIN_PX || Math.abs(deltaY) > SWIPE_DIRECTION_MIN_PX) {
             swipeDirectionDetermined = true;
             isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
         }
     }
 
     if (swipeDirectionDetermined) {
-        if (isHorizontalSwipe && Math.abs(deltaY) > Math.abs(deltaX) + 40) {
+        if (isHorizontalSwipe && Math.abs(deltaY) > Math.abs(deltaX) + SWIPE_DIRECTION_LOCK_PX) {
             isHorizontalSwipe = false;
-        } else if (!isHorizontalSwipe && Math.abs(deltaX) > Math.abs(deltaY) + 40) {
+        } else if (!isHorizontalSwipe && Math.abs(deltaX) > Math.abs(deltaY) + SWIPE_DIRECTION_LOCK_PX) {
             isHorizontalSwipe = true;
             swipeStartX = x;
             swipeStartY = y;
         }
 
         if (isHorizontalSwipe) {
-            if (e && e.cancelable) e.preventDefault();
+            // Non bloccare il touch se l'utente sta toccando un elemento scrollabile verticalmente
+            const touchTarget = (e && e.touches && e.touches[0])
+                ? document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY)
+                : null;
+            const isOverScrollable = touchTarget && (
+                touchTarget.closest('#zerodiv-content-grid') ||
+                touchTarget.closest('#zd-search-results') ||
+                touchTarget.closest('.zd-panel-overlay-style')
+            );
+            if (!isOverScrollable && e && e.cancelable) e.preventDefault();
             updateCarouselPositions(swipeCurrentX - swipeStartX, false);
         } else {
             updateCarouselPositions(0, false);
@@ -283,6 +295,9 @@ const moveCarouselDrag = (x, y, e) => {
 const endCarouselDrag = () => {
     if (!isSwipingCarousel) return;
     isSwipingCarousel = false;
+    // Ripristina overflow nascosto al termine del trascinamento
+    const track = CalcBridge.getElementById('carousel-track');
+    if (track) track.classList.remove('is-dragging');
 
     if (swipeDirectionDetermined && !isHorizontalSwipe) {
         updateCarouselPositions(0, true);
@@ -293,8 +308,8 @@ const endCarouselDrag = () => {
     const trackWidth = track ? (track.offsetWidth || 300) : 300;
     const delta = swipeCurrentX - swipeStartX;
 
-    if (delta > trackWidth * 0.15) applySwipeState((currentSwipeState + 2) % 3);
-    else if (delta < -trackWidth * 0.15) applySwipeState((currentSwipeState + 1) % 3);
+    if (delta > trackWidth * SWIPE_THRESHOLD_RATIO) applySwipeState((currentSwipeState + 2) % 3);
+    else if (delta < -trackWidth * SWIPE_THRESHOLD_RATIO) applySwipeState((currentSwipeState + 1) % 3);
     else updateCarouselPositions(0, true);
 };
 
