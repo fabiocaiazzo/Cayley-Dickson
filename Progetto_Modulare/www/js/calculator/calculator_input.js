@@ -3,6 +3,7 @@ import { switchVar, switchCalcView } from './calculator_ui.js';
 import { CalcBridge } from './calculator_popout.js';
 import { calcAction } from './calculator_core.js';
 import { calcSteps } from './calculator_steps.js';
+import { LONG_PRESS_DELAY_MS, INPUT_LISTENER_DELAY_MS } from '../core/constants.js';
 
 let isShiftActive = false;
 export function getIsShiftActive() { return isShiftActive; }
@@ -84,7 +85,7 @@ function createPressHandler(onLongPress, onShortPress) {
             timer = setTimeout(() => {
                 handled = true;
                 if (onLongPress) onLongPress(e, ...args);
-            }, 400);
+            }, LONG_PRESS_DELAY_MS);
         },
         end: (e, ...args) => {
             if (e) e.preventDefault();
@@ -223,13 +224,19 @@ export function calcInput(val) {
 }
 
 // ================== BRACKET HIGHLIGHTER ======================
-const exprInput = CalcBridge.getElementById('expression-display');
-const highlightLayer = CalcBridge.getElementById('highlight-layer');
+// Lazy init: l'elemento potrebbe non esistere al momento del caricamento del modulo
+// (es. calcolatrice in finestra separata). Viene recuperato al primo utilizzo.
+let exprInput = null;
+let highlightLayer = null;
+function getExprInput() { return exprInput ?? (exprInput = CalcBridge.getElementById('expression-display')); }
+function getHighlightLayer() { return highlightLayer ?? (highlightLayer = CalcBridge.getElementById('highlight-layer')); }
 
 function updateBracketHighlight() {
-    if (!exprInput || !highlightLayer) return;
-    const text = exprInput.value;
-    const cursor = exprInput.selectionStart;
+    const ei = getExprInput();
+    const hl = getHighlightLayer();
+    if (!ei || !hl) return;
+    const text = ei.value;
+    const cursor = ei.selectionStart;
 
     let idx1 = -1;
     let idx2 = -1;
@@ -335,7 +342,7 @@ function updateBracketHighlight() {
         }
     }
 
-    exprInput.dataset.ghostMap = JSON.stringify(ghostGroupsData);
+    ei.dataset.ghostMap = JSON.stringify(ghostGroupsData);
 
     let html = '';
 
@@ -368,24 +375,25 @@ function updateBracketHighlight() {
         }
     }
 
-    highlightLayer.innerHTML = html;
+    hl.innerHTML = html;
     
     if (totalGhosts > 0) {
-        exprInput.style.paddingRight = `calc(4px + ${totalGhosts}ch)`;
+        ei.style.paddingRight = `calc(4px + ${totalGhosts}ch)`;
     } else {
-        exprInput.style.paddingRight = '4px';
+        ei.style.paddingRight = '4px';
     }
 
-    highlightLayer.scrollLeft = exprInput.scrollLeft;
+    hl.scrollLeft = ei.scrollLeft;
 }
 
-if (exprInput) {
+const ei0 = getExprInput();
+if (ei0) {
     const commitGhost = () => {
         try {
-            const ghostMapStr = exprInput.dataset.ghostMap;
+            const ghostMapStr = ei0.dataset.ghostMap;
             if (!ghostMapStr) return false;
             const ghostMap = JSON.parse(ghostMapStr);
-            const cursor = exprInput.selectionStart;
+            const cursor = ei0.selectionStart;
             if (ghostMap[cursor] && ghostMap[cursor].length > 0) {
                 calcInput(ghostMap[cursor][0]);
                 return true;
@@ -395,14 +403,15 @@ if (exprInput) {
     };
 
     ['input', 'click', 'keyup', 'focus', 'scroll'].forEach(evt => {
-        exprInput.addEventListener(evt, (e) => {
+        ei0.addEventListener(evt, (e) => {
             if (evt === 'scroll') {
-                highlightLayer.scrollLeft = exprInput.scrollLeft;
+                const hl0 = getHighlightLayer();
+                if (hl0) hl0.scrollLeft = ei0.scrollLeft;
                 return;
             }
 
             if (evt === 'click') {
-                const isAtEnd = exprInput.selectionStart === exprInput.value.length;
+                const isAtEnd = ei0.selectionStart === ei0.value.length;
                 if (isAtEnd) commitGhost();
             }
 
@@ -410,7 +419,7 @@ if (exprInput) {
         });
     });
 
-    exprInput.addEventListener('keydown', (e) => {
+    ei0.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') {
             if (commitGhost()) {
                 e.preventDefault(); 
@@ -422,8 +431,6 @@ if (exprInput) {
 // --- EVENT LISTENERS (Ex-Inline HTML) ---
 setTimeout(() => {
     const doc = CalcBridge;
-    
-    const bindPress = (el, startFn, endFn, cancelFn, arg = null) => {
         if(!el) return;
         el.addEventListener('pointerdown', (e) => startFn(e, arg));
         el.addEventListener('pointerup', (e) => endFn(e, arg));
@@ -459,4 +466,4 @@ setTimeout(() => {
         handleKey('=?');
         hideEvalPopup();
     });
-}, 500);
+}, INPUT_LISTENER_DELAY_MS);

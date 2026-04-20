@@ -261,8 +261,9 @@ export function initRotation() {
         const rawVal = el.value.replace(',', '.').trim();
         let isValid = true;
         
-        // Validazione visiva: controlliamo rigidamente se è un numero valido
-        const isInvalid = rawVal !== '' && !/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(rawVal);
+        // Validazione visiva: controlliamo rigidamente se è un numero valido.
+        // Accettiamo '-', '+', '-.' come stati intermedi validi (l'utente sta ancora digitando).
+        const isInvalid = rawVal !== '' && rawVal !== '-' && rawVal !== '+' && rawVal !== '-.' && !/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(rawVal);
         if (isInvalid) {
             el.style.setProperty('background-color', 'rgba(255, 60, 60, 0.4)', 'important');
             isValid = false;

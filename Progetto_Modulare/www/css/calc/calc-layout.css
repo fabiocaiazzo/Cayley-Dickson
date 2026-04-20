@@ -198,6 +198,10 @@
         touch-action: pan-y;
     }
 
+    /* Durante il drag mostriamo i pannelli adiacenti */
+    #carousel-track.is-dragging {
+        overflow: visible;
+    }
     .carousel-panel {
         grid-area: 1 / 1;
         position: relative;

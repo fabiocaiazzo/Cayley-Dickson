@@ -6,6 +6,11 @@ import { currentVar, saveVar, switchVar, setGrid } from './calculator_ui.js';
 import { createZeroVector, storedVars } from '../math/parser.js';
 import { currentAlgState, AppState } from '../core/state.js';
 import { vecMul } from '../math/algebra.js';
+import { openCalculator } from './calculator_window.js';
+import { calcAction } from './calculator_core.js';
+import { t } from '../core/i18n.js';
+import { isMobile, zManager } from '../core/constants.js';
+import { CalcBridge } from './calculator_popout.js';
 
 let cachedZD32 = null;
 export function generate32ZeroDivisors() {
@@ -56,19 +61,18 @@ const getActiveZeroDivisors = () => {
     return (AppState && AppState.is32IonMode) ? generate32ZeroDivisors() : ZERO_DIVISORS_RAW;
 };
 
-export let resetZeroDivisorUI = null;
-export let handleZeroDivisorClick = null;
+// Indirezione robusta: i consumatori ottengono sempre una funzione callable;
+// la funzione reale viene assegnata quando la UI viene inizializzata.
+let _resetZeroDivisorUI = null;
+let _handleZeroDivisorClick = null;
+export const resetZeroDivisorUI = (...args) => _resetZeroDivisorUI?.(...args);
+export const handleZeroDivisorClick = (...args) => _handleZeroDivisorClick?.(...args);
 
 const resetView = () => window.dispatchEvent(new Event('requestResetView'));
 const setCurrentAlgState = (val) => window.dispatchEvent(new CustomEvent('requestAlgebraChange', { detail: val }));
 const filterSubspace = (val) => window.dispatchEvent(new CustomEvent('requestFilterSubspace', { detail: val }));
-import { openCalculator } from './calculator_window.js';
-import { calcAction } from './calculator_core.js';
-import { t } from '../core/i18n.js';
 
 let preZDState = null;
-import { isMobile, zManager } from '../core/constants.js';
-import { CalcBridge } from './calculator_popout.js';
 
 // Pre-istanzio i materiali per evitare memory leak GPU ad ogni calcolo
 const matBlue = new THREE.MeshPhysicalMaterial({ color: 0x0088ff, metalness: 0.2, roughness: 0.4 });
@@ -177,9 +181,9 @@ export function updateZeroDivisorUI(limitIndex) {
                 keys = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15];
                 keys.forEach(k => currentGroups[k] = []);
                 ZERO_DIVISORS_RAW.forEach((zd) => {
-                    const t = POSITIVE_TRIPLETS.find(tr => tr.includes(zd[0]) && tr.includes(zd[1]));
-                    if (t) {
-                        const k = t.find(val => val !== zd[0] && val !== zd[1]);
+                    const foundTriplet = POSITIVE_TRIPLETS.find(tr => tr.includes(zd[0]) && tr.includes(zd[1]));
+                    if (foundTriplet) {
+                        const k = foundTriplet.find(val => val !== zd[0] && val !== zd[1]);
                         if (currentGroups[k]) currentGroups[k].push(zd);
                     }
                 });
@@ -202,7 +206,7 @@ export function updateZeroDivisorUI(limitIndex) {
             let activeZD = null;
             let lastActiveKey = keys[0];
 
-            handleZeroDivisorClick = function (zd, zdID, activeKey) {
+            _handleZeroDivisorClick = function (zd, zdID, activeKey) {
                 const isCurrent32 = (AppState && AppState.is32IonMode);
 
                 const updateSearchResultsColor = (activeID) => {
@@ -379,7 +383,7 @@ export function updateZeroDivisorUI(limitIndex) {
                 }
             };
 
-            resetZeroDivisorUI = function () {
+            _resetZeroDivisorUI = function () {
                 if (activeZD !== null) {
                     activeZD = null;
                     if (AppState && AppState.is32IonMode) {
@@ -468,14 +472,14 @@ export function updateZeroDivisorUI(limitIndex) {
                 btn.style.minWidth = "0"; // Impedisce al contenuto di forzare l'allargamento
                 btn.style.textAlign = "center";
                 btn.style.boxSizing = "border-box";
-                btn.style.minWidth = "0"; // Permette al bottone di restringersi se necessario
-                btn.style.textAlign = "center";
 
                 if (is32) {
                     btn.innerHTML = `e<sub>${k}</sub>`;
                 } else if (isFanoMode) {
-                    btn.innerHTML = `P<sub>${i + 1}</sub>`;
+                    // Mostra la terna identificativa del piano (gli elementi ≤7 presenti nel piano)
                     const planeNodes = [...new Set(FANO_PLANES[k].flat())].sort((a, b) => a - b);
+                    const lowNodes = planeNodes.filter(n => n <= 7);
+                    btn.innerHTML = `<small>e<sub>${lowNodes[0]}</sub>e<sub>${lowNodes[1]}</sub>e<sub>${lowNodes[2]}</sub></small>`;
                     btn.title = "{" + planeNodes.map(n => "e" + n).join(", ") + "}";
                 } else {
                     btn.innerHTML = `e<sub>${k}</sub>`;

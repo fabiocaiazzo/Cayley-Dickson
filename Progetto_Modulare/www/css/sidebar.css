@@ -658,3 +658,15 @@
     border: 2px solid transparent;
     /* gestito dinamicamente da JS per i colori */
 }
+
+/* --- RESPONSIVE: TESTO BOTTONI PIANI DI FANO E PG(3,2) SU MOBILE --- */
+@media (max-width: 480px) {
+    .fano-btn-32,
+    .pg32-btn-cell {
+        font-size: 9px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 4px 2px;
+    }
+}

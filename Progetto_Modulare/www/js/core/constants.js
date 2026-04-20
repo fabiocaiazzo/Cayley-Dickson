@@ -10,6 +10,13 @@ export const TIMINGS = { CLOSURE_FLASH: 300, CLOSURE_PLAY: 800 };
 export const MOBILE_BP = 768;
 export const isMobile = () => window.innerWidth <= MOBILE_BP;
 
+// Soglie interazione numeriche nominate per evitare magic numbers
+export const LONG_PRESS_DELAY_MS = 400;
+export const INPUT_LISTENER_DELAY_MS = 500;
+export const SWIPE_THRESHOLD_RATIO = 0.15;
+export const SWIPE_DIRECTION_MIN_PX = 8;
+export const SWIPE_DIRECTION_LOCK_PX = 40;
+
 // Gestore globale dello z-index delle finestre
 export const zManager = {
     _z: 2000,
